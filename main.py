@@ -14,7 +14,13 @@ import csv
 from ui_interface import *
 
 ## A LIST OF UI WIDGETS TO APPLY SHADOW
-
+shadow_elements = {
+    "left_menu_frame",
+    "frame_3",
+    "frame_15",
+    "header_frame",
+    "frame_9"
+}
 
 def read_wifipoints():
     print("GG")
