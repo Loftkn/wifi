@@ -280,7 +280,7 @@ border-radius: 5px;
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="bar_charts_btn">
+              <widget class="QPushButton" name="list_wifi_btn">
                <property name="text">
                 <string>Bar Chars</string>
                </property>
@@ -291,6 +291,13 @@ border-radius: 5px;
               </widget>
              </item>
             </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="horizontalSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
            </widget>
           </item>
          </layout>
@@ -793,7 +800,7 @@ font-size: 30px</string>
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="bar_charts">
+            <widget class="QWidget" name="list_wifi">
              <layout class="QVBoxLayout" name="verticalLayout_15">
               <item>
                <widget class="QFrame" name="frame_19">
@@ -833,7 +840,7 @@ font-size: 30px</string>
                    <property name="frameShadow">
                     <enum>QFrame::Raised</enum>
                    </property>
-                   <layout class="QGridLayout" name="bar_charts_cont">
+                   <layout class="QGridLayout" name="list_wifi_cont">
                     <property name="sizeConstraint">
                      <enum>QLayout::SetNoConstraint</enum>
                     </property>

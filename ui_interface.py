@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfaceVNmaKi.ui'
+## Form generated from reading UI file 'interfacezCOrnc.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.3
 ##
@@ -11,36 +11,8 @@
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
-import csv
+
 import resources_rc
-
-def read_wifipoints():
-    global wifi_points
-    with open('data.csv', 'r') as file:
-        csv_reader = csv.reader(file)
-        next(csv_reader)
-        next(csv_reader)
-        for wifi in csv_reader:
-            if wifi == []:
-                break
-            name = wifi[13].strip()
-            if name == '':
-                name = '#hidden#'
-            wifi_points.append({'name': name,
-                                'MAC': wifi[0],
-                                'first_time': wifi[1].strip(),
-                                'last_time': wifi[2].strip(),
-                                'channel': wifi[3].strip(),
-                                'speed': wifi[4].strip(),
-                                'privacy': wifi[5].strip(),
-                                'cipher': wifi[6].strip(),
-                                'auth': wifi[7].strip(),
-                                'power': int(wifi[8].strip())
-                                })
-    wifi_points = list(sorted(wifi_points, key=lambda item: item['power'], reverse=True))
-
-wifi_points = []
-read_wifipoints()
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -185,6 +157,12 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_3.addWidget(self.frame_12, 0, Qt.AlignTop)
+
+        self.horizontalSlider = QSlider(self.frame_4)
+        self.horizontalSlider.setObjectName(u"horizontalSlider")
+        self.horizontalSlider.setOrientation(Qt.Horizontal)
+
+        self.verticalLayout_3.addWidget(self.horizontalSlider)
 
 
         self.verticalLayout.addWidget(self.frame_4)
@@ -637,11 +615,6 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        global wifi_points
-        categories = []
-        for i in range(0,20):
-            categories.append(wifi_points[i]["name"])
-
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label_2.setText("")
         self.label.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi Hunter", None))
@@ -649,7 +622,7 @@ class Ui_MainWindow(object):
         self.temperature_bar_btn.setText(QCoreApplication.translate("MainWindow", u"List of Wi-Fi", None))
         self.nested_donut_btn.setText(QCoreApplication.translate("MainWindow", u"Donuts with Wi-Fi", None))
         self.line_chart_btn.setText(QCoreApplication.translate("MainWindow", u"Line Chats", None))
-        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"List Wi-Fi", None))
+        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"Bar Chars", None))
         self.open_close_side_bar_btn.setText(QCoreApplication.translate("MainWindow", u"MENU", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"DASHBOARD", None))
         self.minimize_window_button.setText("")
@@ -660,21 +633,21 @@ class Ui_MainWindow(object):
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"LINE CHARTS", None))
         self.pushButton_100.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", f"{categories[0]}", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_101.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", f"{categories[1]}", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_102.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", f"{categories[2]}", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_103.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", f"{categories[3]}", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_104.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", f"{categories[4]}", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_105.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", f"{categories[5]}", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.pushButton_106.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.label_9.setText(QCoreApplication.translate("MainWindow", f"{categories[6]}", None))
+        self.label_9.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Scan page", None))
-        #self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.size_grip.setText("")
     # retranslateUi
 
