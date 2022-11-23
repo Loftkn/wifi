@@ -27,7 +27,7 @@ shadow_elements = {
 def read_wifipoints():
     print("GG")
     global wifi_points
-    with open('test-01.csv', 'r') as file:
+    with open('data.csv', 'r') as file:
         csv_reader = csv.reader(file)
         next(csv_reader)
         next(csv_reader)
@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
-            slc.doubleClicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.percentage_bar_chart))
+            slc.doubleClicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
 
         else:
             for donut in self.donuts:

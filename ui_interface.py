@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfacezCOrnc.ui'
+## Form generated from reading UI file 'interfacelEdixQ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.3
 ##
@@ -323,19 +323,6 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QFrame.Raised)
         self.percentage_bar_chart_cont = QGridLayout(self.frame)
         self.percentage_bar_chart_cont.setObjectName(u"percentage_bar_chart_cont")
-        self.pushButton_2 = QPushButton(self.frame)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setMinimumSize(QSize(200, 50))
-        self.pushButton_2.setMaximumSize(QSize(500, 50))
-        self.pushButton_2.setStyleSheet(u"background-color: gray;\n"
-"font-size: 30px")
-        icon9 = QIcon()
-        icon9.addFile(u"icons/rss.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.pushButton_2.setIcon(icon9)
-        self.pushButton_2.setIconSize(QSize(32, 32))
-
-        self.percentage_bar_chart_cont.addWidget(self.pushButton_2, 0, 0, 1, 1, Qt.AlignHCenter)
-
 
         self.verticalLayout_6.addWidget(self.frame)
 
@@ -568,11 +555,6 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.temperature_bar_chart_cont = QGridLayout(self.frame_2)
         self.temperature_bar_chart_cont.setObjectName(u"temperature_bar_chart_cont")
-        self.pushButton = QPushButton(self.frame_2)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.temperature_bar_chart_cont.addWidget(self.pushButton, 0, 0, 1, 1)
-
 
         self.verticalLayout_9.addWidget(self.frame_2)
 
@@ -629,7 +611,6 @@ class Ui_MainWindow(object):
         self.restore_window_button.setText("")
         self.close_window_button.setText("")
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"List wifi", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Scan", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"LINE CHARTS", None))
         self.pushButton_100.setText(QCoreApplication.translate("MainWindow", u"Go", None))
@@ -647,7 +628,6 @@ class Ui_MainWindow(object):
         self.pushButton_106.setText(QCoreApplication.translate("MainWindow", u"Go", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"Scan page", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
         self.size_grip.setText("")
     # retranslateUi
 
