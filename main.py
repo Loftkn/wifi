@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
+
 import sys
-from PySide2 import QtCore, QGraphicsDropShadowEffect, QtGui, \
-                    QSizeGrip, Qt, QtWidgets, QColor, \
-                    QPropertyAnimation, QSizePolicy, QSize, \
-                    QTimer
-from PySide2.QtGui import QPainter
-from PySide2.QtWidgets import (QMainWindow, QApplication)
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtGui import QPainter, QColor
+from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy
 from PySide2.QtCharts import QtCharts
+from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
 
 from random import randrange
 from functools import partial
