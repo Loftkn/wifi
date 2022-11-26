@@ -18,14 +18,13 @@ from ui_interface import Ui_MainWindow
 shadow_elements = {
     "left_menu_frame",
     "frame_3",
-    "frame_15",
+    "donuts_frame_15",
     "header_frame",
     "frame_9"
 }
 
 
 def read_wifipoints():
-    print("GG")
     global wifi_points
     with open('data.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -97,12 +96,12 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        self.ui.percentage_bar_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.read_wifipoints))
-        self.ui.temperature_bar_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
+        self.ui.tools_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.read_wifipoints))
+        self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.line_chart_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
+        self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
-        self.ui.pushButton_100.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
+        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
 
         self.create_list_wifi()
         self.create_nested_donuts()
@@ -154,7 +153,7 @@ class MainWindow(QMainWindow):
         self.chart_view.setSizePolicy(sizePolicy)
         self.chart_view.setMinimumSize(QSize(0, 300))
         self.ui.nested_donut_chart_cont.addWidget(self.chart_view, 0, 0, 9, 9)
-        self.ui.frame_7.setStyleSheet(u"background-color: transparent")
+        self.ui.donuts_frame_7.setStyleSheet(u"background-color: transparent")
 
         self.min_size = 0.1
         self.max_size = 0.9
@@ -257,7 +256,7 @@ class MainWindow(QMainWindow):
         chart_view.setSizePolicy(sizePolicy)
         chart_view.setMinimumSize(QSize(0, 10))
         self.ui.list_wifi_cont.addWidget(chart_view, 0, 0, 9, 9)
-        self.ui.frame_2.setStyleSheet(u"background-color: transparent")
+        self.ui.topology_frame_2.setStyleSheet(u"background-color: transparent")
 
 
 wifi_points = []
