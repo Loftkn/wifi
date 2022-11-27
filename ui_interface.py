@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfaceKzKARk.ui'
+## Form generated from reading UI file 'interfacercQdJs.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
-#from PySide2.QtCore import *
-#from PySide2.QtGui import *
-#from PySide2.QtWidgets import *
 
-from PySide2.QtWidgets import QApplication, QWidget,QHBoxLayout, QLabel, QSlider, QFrame, QVBoxLayout, QSizePolicy, QPushButton, QGridLayout, QStackedWidget, QLayout
-import sys
-from PySide2.QtGui import QIcon, QFont, QPixmap
-from PySide2.QtCore import Qt, QSize, QRect, QCoreApplication, QMetaObject
-from PySide2 import QtGui
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 import resources_rc
 
@@ -29,7 +24,6 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet(u"*{color: #fff; border: none;}")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        slider = QSlider()
         font = QFont()
         font.setFamily(u"NovaFlat")
         self.centralwidget.setFont(font)
@@ -343,7 +337,7 @@ class Ui_MainWindow(object):
         self.donuts_label_15.setStyleSheet(u"background-color: none;")
         self.donuts_label_15.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_10.addWidget(self.donuts_label_15, 0, Qt.AlignTop)
+        self.verticalLayout_10.addWidget(self.donuts_label_15)
 
 
         self.verticalLayout_11.addWidget(self.donuts_frame_15)
@@ -378,7 +372,7 @@ class Ui_MainWindow(object):
         self.wifi_page_label_16.setStyleSheet(u"background-color: none;")
         self.wifi_page_label_16.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_12.addWidget(self.wifi_page_label_16, 0, Qt.AlignTop)
+        self.verticalLayout_12.addWidget(self.wifi_page_label_16)
 
 
         self.verticalLayout_13.addWidget(self.wifi_page_frame_17)
@@ -391,8 +385,8 @@ class Ui_MainWindow(object):
         self.wifi_page_frame_16.setStyleSheet(u"QFrame{background-color: none;}")
         self.wifi_page_frame_16.setFrameShape(QFrame.StyledPanel)
         self.wifi_page_frame_16.setFrameShadow(QFrame.Raised)
-        self.line_charts_cont = QGridLayout(self.wifi_page_frame_16)
-        self.line_charts_cont.setObjectName(u"line_charts_cont")
+        self.wifi_page_cont = QGridLayout(self.wifi_page_frame_16)
+        self.wifi_page_cont.setObjectName(u"wifi_page_cont")
 
         self.verticalLayout_13.addWidget(self.wifi_page_frame_16)
 
@@ -423,12 +417,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.addWidget(self.list_wifi_frame_18)
 
         self.horizontalSlider = QSlider(self.list_wifi_frame_19)
-        self.horizontalSlider.setMinimum(10)
-        self.horizontalSlider.setMaximum(30)
-        self.horizontalSlider.setValue(20)
-        self.horizontalSlider.setTickInterval(5)
-        self.horizontalSlider.setTickPosition(QSlider.TicksBelow)
-        self.horizontalSlider.valueChanged.connect(lambda: print(self.horizontalSlider.value()))
         self.horizontalSlider.setObjectName(u"horizontalSlider")
         self.horizontalSlider.setOrientation(Qt.Horizontal)
 
@@ -588,7 +576,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

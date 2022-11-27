@@ -568,7 +568,7 @@ QPushButton:hover{
              <string notr="true">background-color: rgba(61, 80, 95, 100)</string>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="tools">
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -644,7 +644,7 @@ QPushButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_10">
-                 <item alignment="Qt::AlignTop">
+                 <item>
                   <widget class="QLabel" name="donuts_label_15">
                    <property name="font">
                     <font>
@@ -707,7 +707,7 @@ QPushButton:hover{
                  <enum>QFrame::Raised</enum>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_12">
-                 <item alignment="Qt::AlignTop">
+                 <item>
                   <widget class="QLabel" name="wifi_page_label_16">
                    <property name="font">
                     <font>
@@ -754,7 +754,7 @@ QPushButton:hover{
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QGridLayout" name="line_charts_cont"/>
+                <layout class="QGridLayout" name="wifi_page_cont"/>
                </widget>
               </item>
              </layout>

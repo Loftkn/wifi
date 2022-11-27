@@ -25,6 +25,7 @@ shadow_elements = {
 
 
 def read_wifipoints():
+    print("vizov1")
     global wifi_points
     with open('data.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -102,9 +103,11 @@ class MainWindow(QMainWindow):
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
+        self.ui.list_wifi_pushButton5.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(    self.ui.wifi_page))
 
         self.create_list_wifi()
         self.create_nested_donuts()
+        self.create_wifi_page()
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
@@ -162,7 +165,7 @@ class MainWindow(QMainWindow):
         self.setup_donuts()
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_rotation)
-        self.update_timer.start(1250)
+        self.update_timer.start(5000)
 
     def setup_donuts(self):
         for i in range(self.donut_count):
@@ -186,6 +189,7 @@ class MainWindow(QMainWindow):
             self.chart_view.chart().addSeries(donut)
 
     def update_rotation(self):
+        read_wifipoints()
         for donut in self.donuts:
             phase_shift = randrange(-50, 100)
             donut.setPieStartAngle(donut.pieStartAngle() + phase_shift)
@@ -256,8 +260,27 @@ class MainWindow(QMainWindow):
         chart_view.setSizePolicy(sizePolicy)
         chart_view.setMinimumSize(QSize(0, 10))
         self.ui.list_wifi_cont.addWidget(chart_view, 0, 0, 9, 9)
-        self.ui.topology_frame_2.setStyleSheet(u"background-color: transparent")
+        self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
 
+    def create_wifi_page(self):
+            read_wifipoints()
+            print("qwe")
+            chart_view = QtCharts.QChartView()
+            chart_view.setRenderHint(QPainter.Antialiasing)
+            chart_view = QtCharts.QChartView()
+            chart_view.setRenderHint(QPainter.Antialiasing)
+            #chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
+            #chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+
+
+            sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
+            chart_view.setSizePolicy(sizePolicy)
+            chart_view.setMinimumSize(QSize(0, 10))
+            self.ui.wifi_page_cont.addWidget(chart_view, 0, 0, 9, 9)
+            self.ui.wifi_page_frame_16.setStyleSheet(u"background-color: transparent")
 
 wifi_points = []
 
