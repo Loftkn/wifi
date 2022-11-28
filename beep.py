@@ -3,7 +3,7 @@ from pygame import mixer
 
 def beep():
     mixer.init()
-    sound = mixer.Sound('beep.wav')
+    sound = mixer.Sound('sound.wav')
     sound.play()
 
 beep()
