@@ -30,7 +30,7 @@ def track():
 
     while True:
         beep()
-        print(delay)
+        #  print(delay)
         sleep(delay)
         current_pw = show_data()
         delay = delay + ((current_pw - last_pw) * (MAX_TIME-MIN_TIME)) / (MAX_POWER-MIN_POWER)
