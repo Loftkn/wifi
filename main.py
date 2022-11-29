@@ -1,6 +1,7 @@
 import subprocess
 from beep import track
 from os import remove
+from time import sleep
 
 
 MONINTERFACE = 'wlp0s20f3mon'
@@ -27,6 +28,7 @@ def single_scan(mac, channel):
                       '--bssid', mac,
                       '-c', channel,
                       MONINTERFACE])
+    sleep(2)
     track()
 
 
@@ -38,3 +40,6 @@ def general_scan():
                       '--background', '1',
                       '-I', '1',
                       MONINTERFACE])
+
+
+single_scan('AA:34:6A:2D:6C:C0', '6')
