@@ -42,4 +42,15 @@ def general_scan():
                       MONINTERFACE])
 
 
-single_scan('AA:34:6A:2D:6C:C0', '6')
+def deauth(wifimac, clientmac=None):
+    if not clientmac:
+        subprocess.Popen(['aireplay-ng',
+                          '--deauth', '100',
+                          '-a', wifimac,
+                          MONINTERFACE])
+    else:
+        subprocess.Popen(['aireplay-ng',
+                          '--deauth', '1',
+                          '-a', wifimac,
+                          '-c', clientmac,
+                          MONINTERFACE])
