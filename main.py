@@ -7,6 +7,7 @@ from PySide2.QtGui import QPainter, QColor
 from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy
 from PySide2.QtCharts import QtCharts
 from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
+import pyqtgraph as pg
 
 from random import randrange
 from functools import partial
@@ -25,7 +26,6 @@ shadow_elements = {
 
 
 def read_wifipoints():
-    print("vizov1")
     global wifi_points
     with open('data.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -202,7 +202,6 @@ class MainWindow(QMainWindow):
             slice_endangle = slc.startAngle() + slc.angleSpan()
             donut = slc.series()
             idx = self.donuts.index(donut)
-            print(donut.count())
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
@@ -263,24 +262,55 @@ class MainWindow(QMainWindow):
         self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
 
     def create_wifi_page(self):
-            read_wifipoints()
-            print("qwe")
-            chart_view = QtCharts.QChartView()
-            chart_view.setRenderHint(QPainter.Antialiasing)
-            chart_view = QtCharts.QChartView()
-            chart_view.setRenderHint(QPainter.Antialiasing)
-            #chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
-            #chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+        global wifi_points
+        categories = []
+        low = QtCharts.QBarSet("Power")
+        for i in range(15):
+            pwr = 100 + wifi_points[i]["power"]
+            low.append(pwr)
+            if pwr > 100:
+                low.append(pwr - 100)
+            print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
+            categories.append(wifi_points[i]["name"])
+
+        series = QtCharts.QStackedBarSeries()
+        series.append(low)
+        chart = QtCharts.QChart()
+        chart.addSeries(series)
+        chart.setAnimationOptions(QtCharts.QChart.SeriesAnimations)
+
+        axisX = QtCharts.QBarCategoryAxis()
+        axisX.append(categories)
+        chart.addAxis(axisX, Qt.AlignBottom)
+        axisY = QtCharts.QValueAxis()
+        axisY.setRange(0, 105 + wifi_points[0]["power"])
+        chart.addAxis(axisY, Qt.AlignLeft)
+        series.attachAxis(axisX)
+        series.attachAxis(axisY)
+
+        y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
+        x = [1,2,3,4,5,6]
+        bargraph = pg.BarGraphItem(x = x, height = y1, width = 1, brush ='g')
 
 
-            sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
-            chart_view.setSizePolicy(sizePolicy)
-            chart_view.setMinimumSize(QSize(0, 10))
-            self.ui.wifi_page_cont.addWidget(chart_view, 0, 0, 9, 9)
-            self.ui.wifi_page_frame_16.setStyleSheet(u"background-color: transparent")
+        chart_view = QtCharts.QChartView(chart)
+        chart_view.setRenderHint(QPainter.Antialiasing)
+
+        chart_view = QtCharts.QChartView(chart)
+        chart_view.setRenderHint(QPainter.Antialiasing)
+        chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
+        chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
+        chart_view.setSizePolicy(sizePolicy)
+        chart_view.setMinimumSize(QSize(0, 10))
+        strng = "Wi-Fi\ndata"
+        self.ui.wifi_page_label_text.setText(strng)
+        self.ui.wifi_page_graph_cont.addWidget(chart_view, 0, 0, 9, 9)
+        #self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
 
 wifi_points = []
 

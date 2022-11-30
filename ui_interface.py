@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfacercQdJs.ui'
+## Form generated from reading UI file 'interfaceqePaIt.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.3
 ##
@@ -358,37 +358,43 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.nested_donuts)
         self.wifi_page = QWidget()
         self.wifi_page.setObjectName(u"wifi_page")
-        self.verticalLayout_13 = QVBoxLayout(self.wifi_page)
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.wifi_page_frame_17 = QFrame(self.wifi_page)
-        self.wifi_page_frame_17.setObjectName(u"wifi_page_frame_17")
-        self.wifi_page_frame_17.setFrameShape(QFrame.StyledPanel)
-        self.wifi_page_frame_17.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_12 = QVBoxLayout(self.wifi_page_frame_17)
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.wifi_page_label_16 = QLabel(self.wifi_page_frame_17)
-        self.wifi_page_label_16.setObjectName(u"wifi_page_label_16")
-        self.wifi_page_label_16.setFont(font1)
-        self.wifi_page_label_16.setStyleSheet(u"background-color: none;")
-        self.wifi_page_label_16.setAlignment(Qt.AlignCenter)
+        self.gridLayout_2 = QGridLayout(self.wifi_page)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.groupBox = QGroupBox(self.wifi_page)
+        self.groupBox.setObjectName(u"groupBox")
+        self.wifi_page_graph_cont = QGridLayout(self.groupBox)
+        self.wifi_page_graph_cont.setObjectName(u"wifi_page_graph_cont")
 
-        self.verticalLayout_12.addWidget(self.wifi_page_label_16)
+        self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 1)
+
+        self.groupBox_2 = QGroupBox(self.wifi_page)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.wifi_page_info_cont = QGridLayout(self.groupBox_2)
+        self.wifi_page_info_cont.setObjectName(u"wifi_page_info_cont")
+        self.frame_2 = QFrame(self.groupBox_2)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.gridLayout_4 = QGridLayout(self.frame_2)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.wifi_page_label_text = QLabel(self.frame_2)
+        self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
+        self.wifi_page_label_text.setAlignment(Qt.AlignCenter)
+
+        self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 
 
-        self.verticalLayout_13.addWidget(self.wifi_page_frame_17)
+        self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)
 
-        self.wifi_page_frame_16 = QFrame(self.wifi_page)
-        self.wifi_page_frame_16.setObjectName(u"wifi_page_frame_16")
-        sizePolicy.setHeightForWidth(self.wifi_page_frame_16.sizePolicy().hasHeightForWidth())
-        self.wifi_page_frame_16.setSizePolicy(sizePolicy)
-        self.wifi_page_frame_16.setMinimumSize(QSize(0, 300))
-        self.wifi_page_frame_16.setStyleSheet(u"QFrame{background-color: none;}")
-        self.wifi_page_frame_16.setFrameShape(QFrame.StyledPanel)
-        self.wifi_page_frame_16.setFrameShadow(QFrame.Raised)
-        self.wifi_page_cont = QGridLayout(self.wifi_page_frame_16)
-        self.wifi_page_cont.setObjectName(u"wifi_page_cont")
+        self.frame = QFrame(self.groupBox_2)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
 
-        self.verticalLayout_13.addWidget(self.wifi_page_frame_16)
+        self.wifi_page_info_cont.addWidget(self.frame, 0, 1, 1, 1)
+
+
+        self.gridLayout_2.addWidget(self.groupBox_2, 1, 0, 1, 1)
 
         self.stackedWidget.addWidget(self.wifi_page)
         self.list_wifi = QWidget()
@@ -598,7 +604,9 @@ class Ui_MainWindow(object):
         self.close_window_button.setText("")
         self.tools_label_13.setText(QCoreApplication.translate("MainWindow", u"List wifi", None))
         self.donuts_label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
-        self.wifi_page_label_16.setText(QCoreApplication.translate("MainWindow", u"LINE CHARTS", None))
+        self.groupBox.setTitle("")
+        self.groupBox_2.setTitle("")
+        self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.list_wifi_pushButton0.setText(QCoreApplication.translate("MainWindow", u"Go", None))
         self.list_wifi_label_3.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
         self.list_wifi_pushButton1.setText(QCoreApplication.translate("MainWindow", u"Go", None))
