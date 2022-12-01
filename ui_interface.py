@@ -442,6 +442,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.list_wifi_frame0)
 
+
         self.list_wifi_frame1 = QFrame(self.list_wifi_frame_19)
         self.list_wifi_frame1.setObjectName(u"list_wifi_frame1")
         self.list_wifi_frame1.setMaximumSize(QSize(16777215, 30))
