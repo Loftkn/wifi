@@ -4,9 +4,9 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtGui import QPainter, QColor
-from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy
+from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
 from PySide2.QtCharts import QtCharts
-from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
+from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, QRect, QCoreApplication
 
 from random import randrange
 from functools import partial
@@ -58,6 +58,29 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
 
         self.ui.setupUi(self)
+
+        for i in range(6): # in range(len(wifi_points))
+            exec(f'self.ui.list_wifi_frame{i} = QFrame(self.ui.list_wifi_frame_19)')
+            exec(f'self.ui.list_wifi_frame{i}.setObjectName(u"list_wifi_frame0")')
+            exec(f'self.ui.list_wifi_frame{i}.setMaximumSize(QSize(16777215, 30))')
+            exec(f'self.ui.list_wifi_frame{i}.setFrameShape(QFrame.StyledPanel)')
+            exec(f'self.ui.list_wifi_frame{i}.setFrameShadow(QFrame.Raised)')
+
+            exec(f'self.ui.list_wifi_pushButton{i} = QPushButton(self.ui.list_wifi_frame{i})')
+            exec(f'self.ui.list_wifi_pushButton{i}.setObjectName(u"list_wifi_pushButton{i}")')
+            exec(f'self.ui.list_wifi_pushButton{i}.setGeometry(QRect(730, 0, 80, 23))')
+
+            exec(f'self.ui.list_wifi_label_{i} = QLabel(self.ui.list_wifi_frame{i})')
+            exec(f'self.ui.list_wifi_label_{i}.setObjectName(u"list_wifi_label_{i}")')
+            exec(f'self.ui.list_wifi_label_{i}.setGeometry(QRect(20, 10, 261, 16))')
+
+            exec(f'self.ui.verticalLayout_14.addWidget(self.ui.list_wifi_frame{i})')
+            exec(f'self.ui.list_wifi_pushButton{i}.setText(QCoreApplication.translate("MainWindow", u"Go", None))')
+            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi_points[i]["name"], None))')
+
+            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))')
+
+
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 

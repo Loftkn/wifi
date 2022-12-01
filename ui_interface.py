@@ -75,6 +75,7 @@ class Ui_MainWindow(object):
         self.icon.setScaledContents(True)
         self.icon.setWordWrap(True)
 
+
         self.horizontalLayout_2.addWidget(self.icon)
 
         self.text = QLabel(self.frame_3)
@@ -382,7 +383,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.wifi_page_frame_16.sizePolicy().hasHeightForWidth())
         self.wifi_page_frame_16.setSizePolicy(sizePolicy)
         self.wifi_page_frame_16.setMinimumSize(QSize(0, 300))
-        self.wifi_page_frame_16.setStyleSheet(u"QFrame{background-color: none;}")
+        self.wifi_page_frame_16.setStyleSheet(u"QFrame{background-color: none;")
         self.wifi_page_frame_16.setFrameShape(QFrame.StyledPanel)
         self.wifi_page_frame_16.setFrameShadow(QFrame.Raised)
         self.wifi_page_cont = QGridLayout(self.wifi_page_frame_16)
@@ -395,13 +396,18 @@ class Ui_MainWindow(object):
         self.list_wifi.setObjectName(u"list_wifi")
         self.verticalLayout_15 = QVBoxLayout(self.list_wifi)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+
+
+        # List WiFi
         self.list_wifi_frame_19 = QFrame(self.list_wifi)
         self.list_wifi_frame_19.setObjectName(u"list_wifi_frame_19")
         self.list_wifi_frame_19.setFrameShape(QFrame.StyledPanel)
         self.list_wifi_frame_19.setFrameShadow(QFrame.Raised)
+
         self.verticalLayout_14 = QVBoxLayout(self.list_wifi_frame_19)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.list_wifi_frame_18 = QFrame(self.list_wifi_frame_19)
+
+        self.list_wifi_frame_18 = QFrame(self.list_wifi_frame_19) #list wifi bar
         self.list_wifi_frame_18.setObjectName(u"list_wifi_frame_18")
         self.list_wifi_frame_18.setEnabled(True)
         self.list_wifi_frame_18.setMinimumSize(QSize(0, 10))
@@ -410,6 +416,7 @@ class Ui_MainWindow(object):
         self.list_wifi_frame_18.setStyleSheet(u"QFrame{background-color: transparent;}")
         self.list_wifi_frame_18.setFrameShape(QFrame.StyledPanel)
         self.list_wifi_frame_18.setFrameShadow(QFrame.Raised)
+
         self.list_wifi_cont = QGridLayout(self.list_wifi_frame_18)
         self.list_wifi_cont.setObjectName(u"list_wifi_cont")
         self.list_wifi_cont.setSizeConstraint(QLayout.SetNoConstraint)
@@ -421,91 +428,6 @@ class Ui_MainWindow(object):
         self.horizontalSlider.setOrientation(Qt.Horizontal)
 
         self.verticalLayout_14.addWidget(self.horizontalSlider)
-
-        self.list_wifi_frame0 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame0.setObjectName(u"list_wifi_frame0")
-        self.list_wifi_frame0.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame0.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame0.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton0 = QPushButton(self.list_wifi_frame0)
-        self.list_wifi_pushButton0.setObjectName(u"list_wifi_pushButton0")
-        self.list_wifi_pushButton0.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_3 = QLabel(self.list_wifi_frame0)
-        self.list_wifi_label_3.setObjectName(u"list_wifi_label_3")
-        self.list_wifi_label_3.setGeometry(QRect(20, 10, 261, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame0)
-
-        self.list_wifi_frame1 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame1.setObjectName(u"list_wifi_frame1")
-        self.list_wifi_frame1.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame1.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame1.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton1 = QPushButton(self.list_wifi_frame1)
-        self.list_wifi_pushButton1.setObjectName(u"list_wifi_pushButton1")
-        self.list_wifi_pushButton1.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_4 = QLabel(self.list_wifi_frame1)
-        self.list_wifi_label_4.setObjectName(u"list_wifi_label_4")
-        self.list_wifi_label_4.setGeometry(QRect(20, 10, 261, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame1)
-
-        self.list_wifi_frame2 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame2.setObjectName(u"list_wifi_frame2")
-        self.list_wifi_frame2.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame2.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame2.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton2 = QPushButton(self.list_wifi_frame2)
-        self.list_wifi_pushButton2.setObjectName(u"list_wifi_pushButton2")
-        self.list_wifi_pushButton2.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_5 = QLabel(self.list_wifi_frame2)
-        self.list_wifi_label_5.setObjectName(u"list_wifi_label_5")
-        self.list_wifi_label_5.setGeometry(QRect(20, 10, 281, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame2)
-
-        self.list_wifi_frame3 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame3.setObjectName(u"list_wifi_frame3")
-        self.list_wifi_frame3.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame3.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame3.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton3 = QPushButton(self.list_wifi_frame3)
-        self.list_wifi_pushButton3.setObjectName(u"list_wifi_pushButton3")
-        self.list_wifi_pushButton3.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_6 = QLabel(self.list_wifi_frame3)
-        self.list_wifi_label_6.setObjectName(u"list_wifi_label_6")
-        self.list_wifi_label_6.setGeometry(QRect(20, 10, 281, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame3)
-
-        self.list_wifi_frame4 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame4.setObjectName(u"list_wifi_frame4")
-        self.list_wifi_frame4.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame4.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame4.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton4 = QPushButton(self.list_wifi_frame4)
-        self.list_wifi_pushButton4.setObjectName(u"list_wifi_pushButton4")
-        self.list_wifi_pushButton4.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_7 = QLabel(self.list_wifi_frame4)
-        self.list_wifi_label_7.setObjectName(u"list_wifi_label_7")
-        self.list_wifi_label_7.setGeometry(QRect(20, 10, 281, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame4)
-
-        self.list_wifi_frame5 = QFrame(self.list_wifi_frame_19)
-        self.list_wifi_frame5.setObjectName(u"list_wifi_frame5")
-        self.list_wifi_frame5.setMaximumSize(QSize(16777215, 30))
-        self.list_wifi_frame5.setFrameShape(QFrame.StyledPanel)
-        self.list_wifi_frame5.setFrameShadow(QFrame.Raised)
-        self.list_wifi_pushButton5 = QPushButton(self.list_wifi_frame5)
-        self.list_wifi_pushButton5.setObjectName(u"list_wifi_pushButton5")
-        self.list_wifi_pushButton5.setGeometry(QRect(730, 0, 80, 23))
-        self.list_wifi_label_8 = QLabel(self.list_wifi_frame5)
-        self.list_wifi_label_8.setObjectName(u"list_wifi_label_8")
-        self.list_wifi_label_8.setGeometry(QRect(20, 10, 291, 16))
-
-        self.verticalLayout_14.addWidget(self.list_wifi_frame5)
-
 
         self.verticalLayout_15.addWidget(self.list_wifi_frame_19)
 
@@ -599,18 +521,7 @@ class Ui_MainWindow(object):
         self.tools_label_13.setText(QCoreApplication.translate("MainWindow", u"List wifi", None))
         self.donuts_label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.wifi_page_label_16.setText(QCoreApplication.translate("MainWindow", u"LINE CHARTS", None))
-        self.list_wifi_pushButton0.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_3.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.list_wifi_pushButton1.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_4.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.list_wifi_pushButton2.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_5.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.list_wifi_pushButton3.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_6.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.list_wifi_pushButton4.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_7.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.list_wifi_pushButton5.setText(QCoreApplication.translate("MainWindow", u"Go", None))
-        self.list_wifi_label_8.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+
         self.topology_label_14.setText(QCoreApplication.translate("MainWindow", u"Scan page", None))
         self.size_grip.setText("")
     # retranslateUi
