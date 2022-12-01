@@ -4,11 +4,11 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtGui import QPainter, QColor
-from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy
+from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
 from PySide2.QtCharts import QtCharts
 from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
 import pyqtgraph as pg
-
+from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, QRect, QCoreApplication
 from random import randrange
 from functools import partial
 import csv
@@ -59,6 +59,42 @@ class MainWindow(QMainWindow):
 
         self.ui.setupUi(self)
 
+        self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
+        self.ui.scrollArea.setObjectName(u"scrollArea")
+        self.ui.scrollArea.setMaximumSize(QSize(16777215, 270))
+
+        self.ui.scrollArea.setWidgetResizable(True)
+        self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.ui.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.ui.scrollAreaWidgetContents = QWidget()
+        self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.ui.vbox = QVBoxLayout()
+        for i in range(10): # in range(len(wifi_points))
+            exec(f'self.ui.list_wifi_frame{i} = QFrame()')
+            exec(f'self.ui.list_wifi_frame{i}.setObjectName(u"list_wifi_frame0")')
+            exec(f'self.ui.list_wifi_frame{i}.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)')
+            exec(f'self.ui.list_wifi_frame{i}.setMinimumSize(QSize(123456,30))')
+
+            exec(f'self.ui.list_wifi_pushButton{i} = QPushButton(self.ui.list_wifi_frame{i})')
+            exec(f'self.ui.list_wifi_pushButton{i}.setObjectName(u"list_wifi_pushButton{i}")')
+            exec(f'self.ui.list_wifi_pushButton{i}.setGeometry(QRect(730, 0, 80, 23))')
+
+            exec(f'self.ui.list_wifi_label_{i} = QLabel(self.ui.list_wifi_frame{i})')
+            exec(f'self.ui.list_wifi_label_{i}.setObjectName(u"list_wifi_label_{i}")')
+            exec(f'self.ui.list_wifi_label_{i}.setGeometry(QRect(20, 10, 261, 16))')
+
+            exec(f'self.ui.list_wifi_pushButton{i}.setText(QCoreApplication.translate("MainWindow", u"Go", None))')
+            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi_points[i]["name"], None))')
+
+            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))')
+            exec(f'self.ui.vbox.addWidget(self.ui.list_wifi_frame{i})')
+        self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
+        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
+        self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
+
+        self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
+
+
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -102,8 +138,6 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
-        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.list_wifi_pushButton5.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(    self.ui.wifi_page))
 
         self.create_list_wifi()
         self.create_nested_donuts()
