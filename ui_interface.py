@@ -411,7 +411,7 @@ class Ui_MainWindow(object):
         self.list_wifi_frame_18.setObjectName(u"list_wifi_frame_18")
         self.list_wifi_frame_18.setEnabled(True)
         self.list_wifi_frame_18.setMinimumSize(QSize(0, 10))
-        self.list_wifi_frame_18.setMaximumSize(QSize(16777215, 270))
+        self.list_wifi_frame_18.setMaximumSize(QSize(16777215, 700))
         self.list_wifi_frame_18.setContextMenuPolicy(Qt.DefaultContextMenu)
         self.list_wifi_frame_18.setStyleSheet(u"QFrame{background-color: transparent;}")
         self.list_wifi_frame_18.setFrameShape(QFrame.StyledPanel)

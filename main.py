@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         self.ui.scrollAreaWidgetContents = QWidget()
         self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.ui.vbox = QVBoxLayout()
-        for i in range(10): # in range(len(wifi_points))
+        for i in range(len(wifi_points)): # in range(len(wifi_points))
             exec(f'self.ui.list_wifi_frame{i} = QFrame()')
             exec(f'self.ui.list_wifi_frame{i}.setObjectName(u"list_wifi_frame0")')
             exec(f'self.ui.list_wifi_frame{i}.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)')
@@ -84,9 +84,11 @@ class MainWindow(QMainWindow):
             exec(f'self.ui.list_wifi_label_{i}.setGeometry(QRect(20, 10, 261, 16))')
 
             exec(f'self.ui.list_wifi_pushButton{i}.setText(QCoreApplication.translate("MainWindow", u"Go", None))')
-            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi_points[i]["name"], None))')
-
-            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))')
+            wifi = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
+            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi, None))')
+            #exec(f'self.ui.list_wifi_pushButton{i}.connect(lambda: print("{wifi_points[i]["name"]}"))')
+            lmbd = "lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts)"
+            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect({lmbd})')
             exec(f'self.ui.vbox.addWidget(self.ui.list_wifi_frame{i})')
         self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
         self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
@@ -94,6 +96,12 @@ class MainWindow(QMainWindow):
 
         self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
 
+
+        self.ui.horizontalSlider.setMinimum(2400)
+        self.ui.horizontalSlider.setMaximum(5500)
+        self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksBelow)
+        self.ui.horizontalSlider.setTickInterval(20)
+        self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -138,7 +146,7 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
-
+        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
@@ -254,13 +262,14 @@ class MainWindow(QMainWindow):
         global wifi_points
         categories = []
         low = QtCharts.QBarSet("Power")
-        for i in range(15):
+        for i in range(10):
             pwr = 100 + wifi_points[i]["power"]
             low.append(pwr)
             if pwr > 100:
                 low.append(pwr - 100)
             print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
-            categories.append(wifi_points[i]["name"])
+            wifi_name_mac = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
+            categories.append(wifi_name_mac)
 
         series = QtCharts.QStackedBarSeries()
         series.append(low)
