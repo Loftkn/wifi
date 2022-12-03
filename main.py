@@ -4,7 +4,8 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtGui import QPainter, QColor
-from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
+from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QApplication, QGraphicsDropShadowEffect, \
+    QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
 from PySide2.QtCharts import QtCharts
 from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
 import pyqtgraph as pg
@@ -14,7 +15,6 @@ from functools import partial
 import csv
 
 from ui_interface import Ui_MainWindow
-
 
 shadow_elements = {
     "left_menu_frame",
@@ -52,6 +52,10 @@ def read_wifipoints():
                               reverse=True))
 
 
+def link_buttons(obj):
+    print()
+
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self)
@@ -69,39 +73,44 @@ class MainWindow(QMainWindow):
         self.ui.scrollAreaWidgetContents = QWidget()
         self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.ui.vbox = QVBoxLayout()
-        for i in range(len(wifi_points)): # in range(len(wifi_points))
-            exec(f'self.ui.list_wifi_frame{i} = QFrame()')
-            exec(f'self.ui.list_wifi_frame{i}.setObjectName(u"list_wifi_frame0")')
-            exec(f'self.ui.list_wifi_frame{i}.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)')
-            exec(f'self.ui.list_wifi_frame{i}.setMinimumSize(QSize(123456,30))')
+        buttons = []
+        for i in range(len(wifi_points)):  # in range(len(wifi_points))
+            self.ui.wifi_list = {}
+            key = 'list_wifi_frame' + str(i)
+            self.ui.wifi_list[key] = QFrame()
+            self.ui.wifi_list[key].setObjectName(key)
+            self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            self.ui.wifi_list[key].setMinimumSize(QSize(123456, 40))
 
-            exec(f'self.ui.list_wifi_pushButton{i} = QPushButton(self.ui.list_wifi_frame{i})')
-            exec(f'self.ui.list_wifi_pushButton{i}.setObjectName(u"list_wifi_pushButton{i}")')
-            exec(f'self.ui.list_wifi_pushButton{i}.setGeometry(QRect(730, 0, 80, 23))')
+            btnKey = 'list_wifi_pushButton' + str(i)
+            self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
+            self.ui.wifi_list[btnKey].setObjectName(btnKey)
+            self.ui.wifi_list[btnKey].setGeometry(QRect(730, 0, 80, 23))
 
-            exec(f'self.ui.list_wifi_label_{i} = QLabel(self.ui.list_wifi_frame{i})')
-            exec(f'self.ui.list_wifi_label_{i}.setObjectName(u"list_wifi_label_{i}")')
-            exec(f'self.ui.list_wifi_label_{i}.setGeometry(QRect(20, 10, 261, 16))')
+            labelKey = 'list_wifi_label_' + str(i)
+            self.ui.wifi_list[labelKey] = QLabel(self.ui.wifi_list[key])
+            self.ui.wifi_list[labelKey].setObjectName(labelKey)
+            self.ui.wifi_list[labelKey].setGeometry(QRect(20, 10, 261, 50))
+            self.ui.wifi_list[labelKey].setAlignment(Qt.AlignLeft)
 
-            exec(f'self.ui.list_wifi_pushButton{i}.setText(QCoreApplication.translate("MainWindow", u"Go", None))')
-            wifi = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
-            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi, None))')
-            #exec(f'self.ui.list_wifi_pushButton{i}.connect(lambda: print("{wifi_points[i]["name"]}"))')
-            lmbd = "lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts)"
-            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect({lmbd})')
-            exec(f'self.ui.vbox.addWidget(self.ui.list_wifi_frame{i})')
+            self.ui.wifi_list[btnKey].setText(QCoreApplication.translate("MainWindow", u"Go", None))
+
+            wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
+
+            self.ui.wifi_list[labelKey].setText(QCoreApplication.translate("MainWindow", wifi, None))
+            self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
+            self.ui.vbox.addWidget(self.ui.wifi_list[key])
         self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
         self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
         self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
-
         self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
-
-
         self.ui.horizontalSlider.setMinimum(2400)
         self.ui.horizontalSlider.setMaximum(5500)
         self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksBelow)
         self.ui.horizontalSlider.setTickInterval(20)
         self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
+
+        # for
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -130,6 +139,7 @@ class MainWindow(QMainWindow):
                     self.move(self.pos() + e.globalPos() - self.clickPosition)
                     self.clickPosition = e.globalPos()
                     e.accept()
+
         self.ui.header_frame.mouseMoveEvent = moveWindow
 
         self.show()
@@ -146,7 +156,6 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
-        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
@@ -223,7 +232,7 @@ class MainWindow(QMainWindow):
 
                 slc.hovered[bool].connect(partial(self.explode_slice, slc=slc))
                 donut.append(slc)
-                size = (self.max_size - self.min_size)/self.donut_count
+                size = (self.max_size - self.min_size) / self.donut_count
                 donut.setHoleSize(self.min_size + i * size)
                 donut.setPieSize(self.min_size + (i + 1) * size)
 
@@ -247,7 +256,7 @@ class MainWindow(QMainWindow):
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
-            slc.doubleClicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
+            slc.doubleClicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
 
         else:
             for donut in self.donuts:
@@ -302,7 +311,7 @@ class MainWindow(QMainWindow):
         chart_view.setSizePolicy(sizePolicy)
         chart_view.setMinimumSize(QSize(0, 10))
         self.ui.list_wifi_cont.addWidget(chart_view, 0, 0, 9, 9)
-        self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
+        # self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
 
     def create_wifi_page(self):
         global wifi_points
@@ -332,9 +341,8 @@ class MainWindow(QMainWindow):
         series.attachAxis(axisY)
 
         y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
-        x = [1,2,3,4,5,6]
-        bargraph = pg.BarGraphItem(x = x, height = y1, width = 1, brush ='g')
-
+        x = [1, 2, 3, 4, 5, 6]
+        bargraph = pg.BarGraphItem(x=x, height=y1, width=1, brush='g')
 
         chart_view = QtCharts.QChartView(chart)
         chart_view.setRenderHint(QPainter.Antialiasing)
@@ -353,7 +361,8 @@ class MainWindow(QMainWindow):
         strng = "Wi-Fi\ndata"
         self.ui.wifi_page_label_text.setText(strng)
         self.ui.wifi_page_graph_cont.addWidget(chart_view, 0, 0, 9, 9)
-        #self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
+        # self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
+
 
 wifi_points = []
 
