@@ -4,10 +4,11 @@
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtGui import QPainter, QColor
-from PySide2.QtWidgets import QMainWindow, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
+from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QApplication, QGraphicsDropShadowEffect, QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel
 from PySide2.QtCharts import QtCharts
+from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt
+import pyqtgraph as pg
 from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, QRect, QCoreApplication
-
 from random import randrange
 from functools import partial
 import csv
@@ -25,7 +26,6 @@ shadow_elements = {
 
 
 def read_wifipoints():
-    print("vizov1")
     global wifi_points
     with open('data.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -59,12 +59,21 @@ class MainWindow(QMainWindow):
 
         self.ui.setupUi(self)
 
-        for i in range(6): # in range(len(wifi_points))
-            exec(f'self.ui.list_wifi_frame{i} = QFrame(self.ui.list_wifi_frame_19)')
+        self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
+        self.ui.scrollArea.setObjectName(u"scrollArea")
+        self.ui.scrollArea.setMaximumSize(QSize(16777215, 270))
+
+        self.ui.scrollArea.setWidgetResizable(True)
+        self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.ui.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.ui.scrollAreaWidgetContents = QWidget()
+        self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.ui.vbox = QVBoxLayout()
+        for i in range(len(wifi_points)): # in range(len(wifi_points))
+            exec(f'self.ui.list_wifi_frame{i} = QFrame()')
             exec(f'self.ui.list_wifi_frame{i}.setObjectName(u"list_wifi_frame0")')
-            exec(f'self.ui.list_wifi_frame{i}.setMaximumSize(QSize(16777215, 30))')
-            exec(f'self.ui.list_wifi_frame{i}.setFrameShape(QFrame.StyledPanel)')
-            exec(f'self.ui.list_wifi_frame{i}.setFrameShadow(QFrame.Raised)')
+            exec(f'self.ui.list_wifi_frame{i}.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)')
+            exec(f'self.ui.list_wifi_frame{i}.setMinimumSize(QSize(123456,30))')
 
             exec(f'self.ui.list_wifi_pushButton{i} = QPushButton(self.ui.list_wifi_frame{i})')
             exec(f'self.ui.list_wifi_pushButton{i}.setObjectName(u"list_wifi_pushButton{i}")')
@@ -74,13 +83,25 @@ class MainWindow(QMainWindow):
             exec(f'self.ui.list_wifi_label_{i}.setObjectName(u"list_wifi_label_{i}")')
             exec(f'self.ui.list_wifi_label_{i}.setGeometry(QRect(20, 10, 261, 16))')
 
-            exec(f'self.ui.verticalLayout_14.addWidget(self.ui.list_wifi_frame{i})')
             exec(f'self.ui.list_wifi_pushButton{i}.setText(QCoreApplication.translate("MainWindow", u"Go", None))')
-            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi_points[i]["name"], None))')
+            wifi = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
+            exec(f'self.ui.list_wifi_label_{i}.setText(QCoreApplication.translate("MainWindow", wifi, None))')
+            #exec(f'self.ui.list_wifi_pushButton{i}.connect(lambda: print("{wifi_points[i]["name"]}"))')
+            lmbd = "lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts)"
+            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect({lmbd})')
+            exec(f'self.ui.vbox.addWidget(self.ui.list_wifi_frame{i})')
+        self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
+        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
+        self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
 
-            exec(f'self.ui.list_wifi_pushButton{i}.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))')
+        self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
 
 
+        self.ui.horizontalSlider.setMinimum(2400)
+        self.ui.horizontalSlider.setMaximum(5500)
+        self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksBelow)
+        self.ui.horizontalSlider.setTickInterval(20)
+        self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -125,9 +146,7 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
-        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.list_wifi_pushButton5.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(    self.ui.wifi_page))
-
+        self.ui.list_wifi_pushButton0.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
@@ -225,7 +244,6 @@ class MainWindow(QMainWindow):
             slice_endangle = slc.startAngle() + slc.angleSpan()
             donut = slc.series()
             idx = self.donuts.index(donut)
-            print(donut.count())
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
@@ -244,13 +262,14 @@ class MainWindow(QMainWindow):
         global wifi_points
         categories = []
         low = QtCharts.QBarSet("Power")
-        for i in range(15):
+        for i in range(10):
             pwr = 100 + wifi_points[i]["power"]
             low.append(pwr)
             if pwr > 100:
                 low.append(pwr - 100)
             print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
-            categories.append(wifi_points[i]["name"])
+            wifi_name_mac = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
+            categories.append(wifi_name_mac)
 
         series = QtCharts.QStackedBarSeries()
         series.append(low)
@@ -286,24 +305,55 @@ class MainWindow(QMainWindow):
         self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
 
     def create_wifi_page(self):
-            read_wifipoints()
-            print("qwe")
-            chart_view = QtCharts.QChartView()
-            chart_view.setRenderHint(QPainter.Antialiasing)
-            chart_view = QtCharts.QChartView()
-            chart_view.setRenderHint(QPainter.Antialiasing)
-            #chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
-            #chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+        global wifi_points
+        categories = []
+        low = QtCharts.QBarSet("Power")
+        for i in range(15):
+            pwr = 100 + wifi_points[i]["power"]
+            low.append(pwr)
+            if pwr > 100:
+                low.append(pwr - 100)
+            print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
+            categories.append(wifi_points[i]["name"])
+
+        series = QtCharts.QStackedBarSeries()
+        series.append(low)
+        chart = QtCharts.QChart()
+        chart.addSeries(series)
+        chart.setAnimationOptions(QtCharts.QChart.SeriesAnimations)
+
+        axisX = QtCharts.QBarCategoryAxis()
+        axisX.append(categories)
+        chart.addAxis(axisX, Qt.AlignBottom)
+        axisY = QtCharts.QValueAxis()
+        axisY.setRange(0, 105 + wifi_points[0]["power"])
+        chart.addAxis(axisY, Qt.AlignLeft)
+        series.attachAxis(axisX)
+        series.attachAxis(axisY)
+
+        y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
+        x = [1,2,3,4,5,6]
+        bargraph = pg.BarGraphItem(x = x, height = y1, width = 1, brush ='g')
 
 
-            sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
-            chart_view.setSizePolicy(sizePolicy)
-            chart_view.setMinimumSize(QSize(0, 10))
-            self.ui.wifi_page_cont.addWidget(chart_view, 0, 0, 9, 9)
-            self.ui.wifi_page_frame_16.setStyleSheet(u"background-color: transparent")
+        chart_view = QtCharts.QChartView(chart)
+        chart_view.setRenderHint(QPainter.Antialiasing)
+
+        chart_view = QtCharts.QChartView(chart)
+        chart_view.setRenderHint(QPainter.Antialiasing)
+        chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
+        chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
+        chart_view.setSizePolicy(sizePolicy)
+        chart_view.setMinimumSize(QSize(0, 10))
+        strng = "Wi-Fi\ndata"
+        self.ui.wifi_page_label_text.setText(strng)
+        self.ui.wifi_page_graph_cont.addWidget(chart_view, 0, 0, 9, 9)
+        #self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
 
 wifi_points = []
 
