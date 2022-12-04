@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot
 import networkx as nx
 import PIL
 
+plt = matplotlib.pyplot
 icons = {
     "router": "comp.png",
     "PC": "comp.png",
@@ -19,6 +20,7 @@ for u in range(1, 10):
 
 pos = nx.spring_layout(G, seed=1734289230)
 fig, ax = plt.subplots()
+#print(fig, "fig", ax, "ax")
 nx.draw_networkx_edges(
     G,
     pos=pos,
@@ -31,17 +33,22 @@ nx.draw_networkx_edges(
 )
 
 
-tr_figure = ax.transData.transform
-tr_axes = fig.transFigure.inverted().transform
+#tr_figure = ax.transData.transform
 
-icon_size = (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.025
-icon_center = icon_size / 2.0
+#tr_axes = fig.transFigure.inverted().transform
+#print(tr_figure, tr_axes)
 
-for n in G.nodes:
-    xf, yf = tr_figure(pos[n])
-    xa, ya = tr_axes((xf, yf))
-    a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
-    a.imshow(G.nodes[n]["image"], "jet")
-    a.axis("off")
+#icon_size = (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.025
+#icon_center = icon_size / 2.0
+
+#for n in G.nodes:
+#    xf, yf = tr_figure(pos[n])
+#    xa, ya = tr_axes((xf, yf))
+#    a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
+#    a.imshow(G.nodes[n]["image"], "jet")
+#    a.axis("off")
+#nx.draw
+
 plt.show()
+
 

@@ -14,6 +14,11 @@ from random import randrange
 from functools import partial
 import csv
 from random import randint
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import networkx as nx
+import PIL
+import pandas as pd
 
 from ui_interface import Ui_MainWindow
 
@@ -38,6 +43,7 @@ def read_wifipoints():
             name = wifi[13].strip()
             if name == '':
                 name = '#hidden#'
+            pwr = 100 + int(wifi[8].strip())
             wifi_points.append({'name': name,
                                 'MAC': wifi[0],
                                 'first_time': wifi[1].strip(),
@@ -47,7 +53,7 @@ def read_wifipoints():
                                 'privacy': wifi[5].strip(),
                                 'cipher': wifi[6].strip(),
                                 'auth': wifi[7].strip(),
-                                'power': int(wifi[8].strip())
+                                'power': pwr
                                 })
     wifi_points = list(sorted(wifi_points, key=lambda item: item['power'],
                               reverse=True))
@@ -106,7 +112,6 @@ class MainWindow(QMainWindow):
             self.ui.wifi_list[key].setMinimumSize(QSize(1500, 40))
             self.ui.frame_width = self.ui.wifi_list[key].width()
             self.ui.frame_height = self.ui.wifi_list[key].height()
-            print(self.ui.frame_width, self.ui.frame_height)
 
             btnKey = 'list_wifi_pushButton' + str(i)
             self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
@@ -165,13 +170,16 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
+        self.ui.tools_btn.clicked.connect(lambda: read_wifipoints())
+        self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
+        self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
+
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
+        self.topology()
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
@@ -224,7 +232,12 @@ class MainWindow(QMainWindow):
 
         self.min_size = 0.1
         self.max_size = 0.9
-        self.donut_count = 5
+        lng = len(wifi_points)
+        print(lng)
+        if lng >= 5:
+            self.donut_count = 5
+        else:
+            self.donut_count = lng
 
         self.setup_donuts()
         self.update_timer = QTimer(self)
@@ -234,7 +247,14 @@ class MainWindow(QMainWindow):
     def setup_donuts(self):
         for i in range(self.donut_count):
             donut = QtCharts.QPieSeries()
-            slccount = randrange(3, 6)
+            if self.donut_count >= 5:
+                if len(wifi_points)/5 >= 5:
+                    slccount = 5
+                else:
+                    slccount = 2
+            else:
+                slccount = 1
+            print(slccount)
             for j in range(slccount):
                 value = randrange(100, 200)
 
@@ -253,7 +273,7 @@ class MainWindow(QMainWindow):
             self.chart_view.chart().addSeries(donut)
 
     def update_rotation(self):
-        read_wifipoints()
+        print("updated")
         for donut in self.donuts:
             phase_shift = randrange(-50, 100)
             donut.setPieStartAngle(donut.pieStartAngle() + phase_shift)
@@ -269,7 +289,8 @@ class MainWindow(QMainWindow):
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
-            slc.doubleClicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
+            print(slc.label(),slc.value())
+#            slc.doubleClicked.connect(partial(link_buttons, self.ui, wifi_info))
 
         else:
             for donut in self.donuts:
@@ -285,11 +306,8 @@ class MainWindow(QMainWindow):
         categories = []
         low = QtCharts.QBarSet("Power")
         for i in range(10):
-            pwr = 100 + wifi_points[i]["power"]
+            pwr = wifi_points[i]["power"]
             low.append(pwr)
-            if pwr > 100:
-                low.append(pwr - 100)
-            print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
             wifi_name_mac = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
             categories.append(wifi_name_mac)
 
@@ -304,7 +322,7 @@ class MainWindow(QMainWindow):
         axisX.append(categories)
         chart.addAxis(axisX, Qt.AlignBottom)
         axisY = QtCharts.QValueAxis()
-        axisY.setRange(0, 105 + wifi_points[0]["power"])
+        axisY.setRange(0, 5 + wifi_points[0]["power"])
         chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisX)
         series.attachAxis(axisY)
@@ -327,47 +345,6 @@ class MainWindow(QMainWindow):
         # self.ui.list_wifi_frame2.setStyleSheet(u"background-color: transparent")
 
     def create_wifi_page(self):
-        global wifi_points
-        categories = []
-        low = QtCharts.QBarSet("Power")
-        for i in range(15):
-            pwr = 100 + wifi_points[i]["power"]
-            low.append(pwr)
-            if pwr > 100:
-                low.append(pwr - 100)
-            print(100 + wifi_points[i]["power"], wifi_points[i]["name"])
-            categories.append(wifi_points[i]["name"])
-
-        series = QtCharts.QStackedBarSeries()
-        series.append(low)
-        chart = QtCharts.QChart()
-        chart.addSeries(series)
-        chart.setAnimationOptions(QtCharts.QChart.SeriesAnimations)
-
-        axisX = QtCharts.QBarCategoryAxis()
-        axisX.append(categories)
-        chart.addAxis(axisX, Qt.AlignBottom)
-        axisY = QtCharts.QValueAxis()
-        axisY.setRange(0, 105 + wifi_points[0]["power"])
-        chart.addAxis(axisY, Qt.AlignLeft)
-        series.attachAxis(axisX)
-        series.attachAxis(axisY)
-
-        # chart_view = QtCharts.QChartView(chart)
-        # chart_view.setRenderHint(QPainter.Antialiasing)
-        #
-        # chart_view = QtCharts.QChartView(chart)
-        # chart_view.setRenderHint(QPainter.Antialiasing)
-        # chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
-        # chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
-        #
-        # sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        # sizePolicy.setHorizontalStretch(0)
-        # sizePolicy.setVerticalStretch(0)
-        # sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
-        # chart_view.setSizePolicy(sizePolicy)
-        # chart_view.setMinimumSize(QSize(0, 10))
-
         self.chart_view = pg.PlotWidget()
         self.x = list(range(100))  # 100 time points
         self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
@@ -380,20 +357,33 @@ class MainWindow(QMainWindow):
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
-
+        self.chart_view.setMaximumSize(QSize(16777215, 270))
+        self.chart_view.setMinimumSize(QSize(16777215, 270))
         self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
 
-        # self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
-
     def update_plot_data(self):
+
         self.x = self.x[1:]  # Remove the first y element.
         self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
         self.y = self.y[1:]  # Remove the first
-        self.y.append(randint(0, 100))  # Add a new random value.
+        #self.y.append(randint(0, 100))  # Add a new random value.
+        self.y.append(wifi_points[0]['power'])
 
         self.data_line.setData(self.x, self.y)  # Update the data.
 
+    def topology(self):
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        G = nx.Graph()
+        G.add_node(wifi_points[0]['name'])
+        for i in range(10):
+            G.add_node(wifi_points[i]['name'])
+            G.add_edge(wifi_points[0]['name'], wifi_points[i]['name'])
+
+        nx.draw(G, with_labels=True)
+        self.canvas.draw_idle()
+        self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
 
 wifi_points = []
 

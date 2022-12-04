@@ -361,6 +361,7 @@ class Ui_MainWindow(object):
 
         self.groupBox_2 = QGroupBox(self.wifi_page)
         self.groupBox_2.setObjectName(u"groupBox_2")
+        self.groupBox_2.setMaximumSize(QSize(16777215, 16777215))
         self.wifi_page_info_cont = QGridLayout(self.groupBox_2)
         self.wifi_page_info_cont.setObjectName(u"wifi_page_info_cont")
         self.frame_2 = QFrame(self.groupBox_2)
@@ -372,11 +373,13 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setAlignment(Qt.AlignCenter)
 
         self.wifi_page_label_text = QLabel(self.frame_2)
+
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
 
         self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 
         self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)
+#        self.wifi_page_info_cont.setMaximumSize(QSize(16777215, 16777215))
 
         self.frame = QFrame(self.groupBox_2)
         self.frame.setObjectName(u"frame")
@@ -426,21 +429,7 @@ class Ui_MainWindow(object):
         self.topology.setObjectName(u"topology")
         self.verticalLayout_9 = QVBoxLayout(self.topology)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.topology_frame_14 = QFrame(self.topology)
-        self.topology_frame_14.setObjectName(u"topology_frame_14")
-        self.topology_frame_14.setFrameShape(QFrame.StyledPanel)
-        self.topology_frame_14.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_8 = QVBoxLayout(self.topology_frame_14)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.topology_label_14 = QLabel(self.topology_frame_14)
-        self.topology_label_14.setObjectName(u"topology_label_14")
-        self.topology_label_14.setFont(font1)
-        self.topology_label_14.setStyleSheet(u"background-color: none;")
-        self.topology_label_14.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_8.addWidget(self.topology_label_14)
-
-        self.verticalLayout_9.addWidget(self.topology_frame_14)
 
         self.topology_frame_2 = QFrame(self.topology)
         self.topology_frame_2.setObjectName(u"topology_frame_2")
@@ -494,11 +483,11 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.icon.setText("")
         self.text.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi Hunter", None))
-        self.tools_btn.setText(QCoreApplication.translate("MainWindow", u"Scan", None))
-        self.topology_btn.setText(QCoreApplication.translate("MainWindow", u"List of Wi-Fi", None))
+        self.tools_btn.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
+        self.topology_btn.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
         self.nested_donut_btn.setText(QCoreApplication.translate("MainWindow", u"Donuts with Wi-Fi", None))
-        self.wifi_page_btn.setText(QCoreApplication.translate("MainWindow", u"Line Chats", None))
-        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"Bar Chars", None))
+        self.wifi_page_btn.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi page", None))
+        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"List Wi-Fi", None))
         self.open_close_side_bar_btn.setText(QCoreApplication.translate("MainWindow", u"MENU", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"DASHBOARD", None))
         self.minimize_window_button.setText("")
@@ -508,7 +497,6 @@ class Ui_MainWindow(object):
         self.donuts_label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.groupBox.setTitle("")
         self.groupBox_2.setTitle("")
-        self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
-        self.topology_label_14.setText(QCoreApplication.translate("MainWindow", u"Scan page", None))
+        self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"No Info", None))
         self.size_grip.setText("")
     # retranslateUi
