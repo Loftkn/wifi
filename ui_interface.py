@@ -377,9 +377,10 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.gridLayout_4 = QGridLayout(self.frame_2)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.gridLayout_4.setAlignment(Qt.AlignCenter)
+
         self.wifi_page_label_text = QLabel(self.frame_2)
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
-        self.wifi_page_label_text.setAlignment(Qt.AlignCenter)
 
         self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 

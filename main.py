@@ -32,7 +32,7 @@ def read_wifipoints():
         next(csv_reader)
         next(csv_reader)
         for wifi in csv_reader:
-            if wifi == []:
+            if not wifi:
                 break
             name = wifi[13].strip()
             if name == '':
@@ -52,13 +52,24 @@ def read_wifipoints():
                               reverse=True))
 
 
-def link_buttons(obj):
-    print()
+def link_buttons(obj, wifi):
+    obj.wifi_page_label_text.setText(wifi)
+    obj.stackedWidget.setCurrentWidget(obj.wifi_page)
 
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self)
+        self.donut_count = None
+        self.clickPosition = None
+        self.animation = None
+        self.donuts = None
+        self.chart_view = None
+        self.chart = None
+        self.min_size = None
+        self.max_size = None
+        self.update_timer = None
+
         self.ui = Ui_MainWindow()
 
         self.ui.setupUi(self)
@@ -73,8 +84,7 @@ class MainWindow(QMainWindow):
         self.ui.scrollAreaWidgetContents = QWidget()
         self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.ui.vbox = QVBoxLayout()
-        buttons = []
-        for i in range(len(wifi_points)):  # in range(len(wifi_points))
+        for i in range(len(wifi_points)):
             self.ui.wifi_list = {}
             key = 'list_wifi_frame' + str(i)
             self.ui.wifi_list[key] = QFrame()
@@ -85,7 +95,8 @@ class MainWindow(QMainWindow):
             btnKey = 'list_wifi_pushButton' + str(i)
             self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
             self.ui.wifi_list[btnKey].setObjectName(btnKey)
-            self.ui.wifi_list[btnKey].setGeometry(QRect(730, 0, 80, 23))
+            self.ui.wifi_list[btnKey].setGeometry(QRect(650, 0, 80, 23))
+            self.ui.wifi_list[btnKey].setStyleSheet('border: 1px solid #fff')
 
             labelKey = 'list_wifi_label_' + str(i)
             self.ui.wifi_list[labelKey] = QLabel(self.ui.wifi_list[key])
@@ -97,9 +108,16 @@ class MainWindow(QMainWindow):
 
             wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
 
+            wifi_info = 'WiFi name: ' + str(wifi_points[i]['name']) + '\n' + \
+                        'MAC address: ' + str(wifi_points[i]['MAC']) + '\n' + \
+                        'Channel: ' + str(wifi_points[i]['channel']) + '\n' + \
+                        'Power: ' + str(wifi_points[i]['power']) + '\n' + \
+                        'Privacy: ' + str(wifi_points[i]['privacy']) + '\n'
+
             self.ui.wifi_list[labelKey].setText(QCoreApplication.translate("MainWindow", wifi, None))
-            self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
+            self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
             self.ui.vbox.addWidget(self.ui.wifi_list[key])
+
         self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
         self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
         self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
@@ -151,7 +169,6 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        self.ui.tools_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.read_wifipoints))
         self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
@@ -340,10 +357,6 @@ class MainWindow(QMainWindow):
         series.attachAxis(axisX)
         series.attachAxis(axisY)
 
-        y1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2]
-        x = [1, 2, 3, 4, 5, 6]
-        bargraph = pg.BarGraphItem(x=x, height=y1, width=1, brush='g')
-
         chart_view = QtCharts.QChartView(chart)
         chart_view.setRenderHint(QPainter.Antialiasing)
 
@@ -358,8 +371,7 @@ class MainWindow(QMainWindow):
         sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
         chart_view.setSizePolicy(sizePolicy)
         chart_view.setMinimumSize(QSize(0, 10))
-        strng = "Wi-Fi\ndata"
-        self.ui.wifi_page_label_text.setText(strng)
+
         self.ui.wifi_page_graph_cont.addWidget(chart_view, 0, 0, 9, 9)
         # self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
 
