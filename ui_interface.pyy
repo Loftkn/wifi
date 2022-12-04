@@ -370,25 +370,12 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.gridLayout_4 = QGridLayout(self.frame_2)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.gridLayout_4.setAlignment(Qt.AlignTop)
-        self.pushButton_2 = QPushButton(self.frame_2)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-
-        self.gridLayout_4.addWidget(self.pushButton_2, 1, 1, 1, 1)
-
-        self.pushButton = QPushButton(self.frame_2)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.gridLayout_4.addWidget(self.pushButton, 1, 0, 1, 1)
-
-        self.pushButton_3 = QPushButton(self.frame_2)
-        self.pushButton_3.setObjectName(u"pushButton_3")
-
-        self.gridLayout_4.addWidget(self.pushButton_3, 1, 2, 1, 1)
+        self.gridLayout_4.setAlignment(Qt.AlignCenter)
 
         self.wifi_page_label_text = QLabel(self.frame_2)
+
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
-        self.wifi_page_label_text.setAlignment(Qt.AlignCenter)
+
         self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 
         self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)
@@ -512,7 +499,4 @@ class Ui_MainWindow(object):
         self.groupBox_2.setTitle("")
         self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"No Info", None))
         self.size_grip.setText("")
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Start", None))
-        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
     # retranslateUi

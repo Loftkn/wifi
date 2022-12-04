@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfacerYeBma.ui'
+## Form generated from reading UI file 'interfacesEHHjh.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.3
 ##
@@ -13,7 +13,6 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 import resources_rc
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -29,20 +28,20 @@ class Ui_MainWindow(object):
         font.setFamily(u"NovaFlat")
         self.centralwidget.setFont(font)
         self.centralwidget.setStyleSheet(u"@font-face {\n"
-                                         "    font-family: NovaFlat;\n"
-                                         "    src: url(:/fonts/Nova_Flat/NovaFlat-Regular.ttf) format(\"truetype\");\n"
-                                         "}\n"
-                                         "*{\n"
-                                         "color: #fff;\n"
-                                         "font-family: NovaFlat;\n"
-                                         "font-size: 12px;\n"
-                                         "border: nine;\n"
-                                         "}\n"
-                                         "#centralwidget{\n"
-                                         "background-color: rgb(33, 43, 51);\n"
-                                         "}\n"
-                                         "\n"
-                                         "")
+"    font-family: NovaFlat;\n"
+"    src: url(:/fonts/Nova_Flat/NovaFlat-Regular.ttf) format(\"truetype\");\n"
+"}\n"
+"*{\n"
+"color: #fff;\n"
+"font-family: NovaFlat;\n"
+"font-size: 12px;\n"
+"border: nine;\n"
+"}\n"
+"#centralwidget{\n"
+"background-color: rgb(33, 43, 51);\n"
+"}\n"
+"\n"
+"")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -85,9 +84,10 @@ class Ui_MainWindow(object):
         font1.setBold(True)
         font1.setWeight(75)
         self.text.setFont(font1)
-        self.text.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter)
+        self.text.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.horizontalLayout_2.addWidget(self.text)
+
 
         self.verticalLayout.addWidget(self.frame_3, 0, Qt.AlignTop)
 
@@ -99,10 +99,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
         self.frame_4.setSizePolicy(sizePolicy)
         self.frame_4.setStyleSheet(u"QFrame{background: none;}\n"
-                                   "QPushButton{\n"
-                                   "padding: 10px;\n"
-                                   "border-radius: 5px;\n"
-                                   "}")
+"QPushButton{\n"
+"padding: 10px;\n"
+"border-radius: 5px;\n"
+"}")
         self.frame_4.setFrameShape(QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QFrame.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.frame_4)
@@ -155,7 +155,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.list_wifi_btn)
 
+
         self.verticalLayout_3.addWidget(self.frame_12, 0, Qt.AlignTop)
+
 
         self.verticalLayout.addWidget(self.frame_4)
 
@@ -168,6 +170,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName(u"gridLayout")
 
         self.verticalLayout.addWidget(self.frame_6, 0, Qt.AlignBottom)
+
 
         self.horizontalLayout.addWidget(self.left_menu_frame)
 
@@ -211,20 +214,21 @@ class Ui_MainWindow(object):
         self.label_11.setFont(font1)
         self.label_11.setAlignment(Qt.AlignCenter)
 
-        self.horizontalLayout_6.addWidget(self.label_11, 0, Qt.AlignHCenter | Qt.AlignBottom)
+        self.horizontalLayout_6.addWidget(self.label_11, 0, Qt.AlignHCenter|Qt.AlignBottom)
 
-        self.horizontalLayout_4.addWidget(self.frame_10, 0, Qt.AlignHCenter | Qt.AlignVCenter)
+
+        self.horizontalLayout_4.addWidget(self.frame_10, 0, Qt.AlignHCenter|Qt.AlignVCenter)
 
         self.frame_11 = QFrame(self.header_frame)
         self.frame_11.setObjectName(u"frame_11")
         self.frame_11.setStyleSheet(u"QPushButton{\n"
-                                    "	background-color: rgb(61, 80, 95);\n"
-                                    "	border-radius: 15px;\n"
-                                    "	border: 3px solid rgb(120, 157, 186);\n"
-                                    "}\n"
-                                    "QPushButton:hover{\n"
-                                    "	background-color: rgb(120, 157, 186);\n"
-                                    "}")
+"	background-color: rgb(61, 80, 95);\n"
+"	border-radius: 15px;\n"
+"	border: 3px solid rgb(120, 157, 186);\n"
+"}\n"
+"QPushButton:hover{\n"
+"	background-color: rgb(120, 157, 186);\n"
+"}")
         self.frame_11.setFrameShape(QFrame.StyledPanel)
         self.frame_11.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_5 = QHBoxLayout(self.frame_11)
@@ -260,7 +264,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addWidget(self.close_window_button)
 
-        self.horizontalLayout_4.addWidget(self.frame_11, 0, Qt.AlignRight | Qt.AlignTop)
+
+        self.horizontalLayout_4.addWidget(self.frame_11, 0, Qt.AlignRight|Qt.AlignTop)
+
 
         self.verticalLayout_2.addWidget(self.header_frame, 0, Qt.AlignTop)
 
@@ -298,6 +304,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addWidget(self.tools_label_13, 0, Qt.AlignTop)
 
+
         self.verticalLayout_6.addWidget(self.tools_frame_13, 0, Qt.AlignTop)
 
         self.tools_frame = QFrame(self.tools)
@@ -332,6 +339,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_10.addWidget(self.donuts_label_15)
 
+
         self.verticalLayout_11.addWidget(self.donuts_frame_15)
 
         self.donuts_frame_7 = QFrame(self.nested_donuts)
@@ -361,7 +369,6 @@ class Ui_MainWindow(object):
 
         self.groupBox_2 = QGroupBox(self.wifi_page)
         self.groupBox_2.setObjectName(u"groupBox_2")
-        self.groupBox_2.setMaximumSize(QSize(16777215, 16777215))
         self.wifi_page_info_cont = QGridLayout(self.groupBox_2)
         self.wifi_page_info_cont.setObjectName(u"wifi_page_info_cont")
         self.frame_2 = QFrame(self.groupBox_2)
@@ -370,7 +377,6 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.gridLayout_4 = QGridLayout(self.frame_2)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.gridLayout_4.setAlignment(Qt.AlignTop)
         self.pushButton_2 = QPushButton(self.frame_2)
         self.pushButton_2.setObjectName(u"pushButton_2")
 
@@ -389,10 +395,11 @@ class Ui_MainWindow(object):
         self.wifi_page_label_text = QLabel(self.frame_2)
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
         self.wifi_page_label_text.setAlignment(Qt.AlignCenter)
-        self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
+
+        self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 3)
+
 
         self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)
-#        self.wifi_page_info_cont.setMaximumSize(QSize(16777215, 16777215))
 
         self.frame = QFrame(self.groupBox_2)
         self.frame.setObjectName(u"frame")
@@ -400,6 +407,7 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QFrame.Raised)
 
         self.wifi_page_info_cont.addWidget(self.frame, 0, 1, 1, 1)
+
 
         self.gridLayout_2.addWidget(self.groupBox_2, 1, 0, 1, 1)
 
@@ -418,7 +426,7 @@ class Ui_MainWindow(object):
         self.list_wifi_frame_18.setObjectName(u"list_wifi_frame_18")
         self.list_wifi_frame_18.setEnabled(True)
         self.list_wifi_frame_18.setMinimumSize(QSize(0, 10))
-        self.list_wifi_frame_18.setMaximumSize(QSize(16777215, 700))
+        self.list_wifi_frame_18.setMaximumSize(QSize(16777215, 270))
         self.list_wifi_frame_18.setContextMenuPolicy(Qt.DefaultContextMenu)
         self.list_wifi_frame_18.setStyleSheet(u"QFrame{background-color: transparent;}")
         self.list_wifi_frame_18.setFrameShape(QFrame.StyledPanel)
@@ -435,6 +443,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.horizontalSlider)
 
+
         self.verticalLayout_15.addWidget(self.list_wifi_frame_19)
 
         self.stackedWidget.addWidget(self.list_wifi)
@@ -442,7 +451,22 @@ class Ui_MainWindow(object):
         self.topology.setObjectName(u"topology")
         self.verticalLayout_9 = QVBoxLayout(self.topology)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.topology_frame_14 = QFrame(self.topology)
+        self.topology_frame_14.setObjectName(u"topology_frame_14")
+        self.topology_frame_14.setFrameShape(QFrame.StyledPanel)
+        self.topology_frame_14.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_8 = QVBoxLayout(self.topology_frame_14)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.topology_label_14 = QLabel(self.topology_frame_14)
+        self.topology_label_14.setObjectName(u"topology_label_14")
+        self.topology_label_14.setFont(font1)
+        self.topology_label_14.setStyleSheet(u"background-color: none;")
+        self.topology_label_14.setAlignment(Qt.AlignCenter)
 
+        self.verticalLayout_8.addWidget(self.topology_label_14)
+
+
+        self.verticalLayout_9.addWidget(self.topology_frame_14)
 
         self.topology_frame_2 = QFrame(self.topology)
         self.topology_frame_2.setObjectName(u"topology_frame_2")
@@ -461,6 +485,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.stackedWidget)
 
+
         self.verticalLayout_2.addWidget(self.frame_8)
 
         self.frame_9 = QFrame(self.main_body_frame)
@@ -478,7 +503,9 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.size_grip)
 
+
         self.verticalLayout_2.addWidget(self.frame_9, 0, Qt.AlignBottom)
+
 
         self.horizontalLayout.addWidget(self.main_body_frame)
 
@@ -486,21 +513,21 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(2)
+
 
         QMetaObject.connectSlotsByName(MainWindow)
-
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.icon.setText("")
         self.text.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi Hunter", None))
-        self.tools_btn.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
-        self.topology_btn.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
+        self.tools_btn.setText(QCoreApplication.translate("MainWindow", u"Scan", None))
+        self.topology_btn.setText(QCoreApplication.translate("MainWindow", u"List of Wi-Fi", None))
         self.nested_donut_btn.setText(QCoreApplication.translate("MainWindow", u"Donuts with Wi-Fi", None))
-        self.wifi_page_btn.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi page", None))
-        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"List Wi-Fi", None))
+        self.wifi_page_btn.setText(QCoreApplication.translate("MainWindow", u"Line Chats", None))
+        self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"Bar Chars", None))
         self.open_close_side_bar_btn.setText(QCoreApplication.translate("MainWindow", u"MENU", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"DASHBOARD", None))
         self.minimize_window_button.setText("")
@@ -510,9 +537,11 @@ class Ui_MainWindow(object):
         self.donuts_label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.groupBox.setTitle("")
         self.groupBox_2.setTitle("")
-        self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"No Info", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"PushButton", None))
+        self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.topology_label_14.setText(QCoreApplication.translate("MainWindow", u"Scan page", None))
         self.size_grip.setText("")
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Start", None))
-        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
     # retranslateUi
+

@@ -98,8 +98,9 @@ class MainWindow(QMainWindow):
         self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
         self.ui.horizontalSlider.setMinimum(2400)
         self.ui.horizontalSlider.setMaximum(5500)
-        self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksBelow)
+        self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksAbove)
         self.ui.horizontalSlider.setTickInterval(20)
+        self.ui.horizontalSlider.setSingleStep(20)
         self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
         # for
@@ -173,7 +174,8 @@ class MainWindow(QMainWindow):
         self.ui.tools_btn.clicked.connect(lambda: read_wifipoints())
         self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
+        self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
+        #self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
 
         self.create_list_wifi()
@@ -181,6 +183,7 @@ class MainWindow(QMainWindow):
         self.create_wifi_page()
         self.topology()
 
+        self.ui.pushButton_3.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
     def restore_or_maximize_window(self):
         if self.isMaximized():
             self.showNormal()
@@ -233,7 +236,6 @@ class MainWindow(QMainWindow):
         self.min_size = 0.1
         self.max_size = 0.9
         lng = len(wifi_points)
-        print(lng)
         if lng >= 5:
             self.donut_count = 5
         else:
@@ -254,7 +256,6 @@ class MainWindow(QMainWindow):
                     slccount = 2
             else:
                 slccount = 1
-            print(slccount)
             for j in range(slccount):
                 value = randrange(100, 200)
 
@@ -273,7 +274,6 @@ class MainWindow(QMainWindow):
             self.chart_view.chart().addSeries(donut)
 
     def update_rotation(self):
-        print("updated")
         for donut in self.donuts:
             phase_shift = randrange(-50, 100)
             donut.setPieStartAngle(donut.pieStartAngle() + phase_shift)
@@ -377,7 +377,7 @@ class MainWindow(QMainWindow):
         self.canvas = FigureCanvas(self.figure)
         G = nx.Graph()
         G.add_node(wifi_points[0]['name'])
-        for i in range(10):
+        for i in range(len(wifi_points)):
             G.add_node(wifi_points[i]['name'])
             G.add_edge(wifi_points[0]['name'], wifi_points[i]['name'])
 
