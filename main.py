@@ -13,6 +13,7 @@ from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, QRect, QCoreAp
 from random import randrange
 from functools import partial
 import csv
+from random import randint
 
 from ui_interface import Ui_MainWindow
 
@@ -55,6 +56,9 @@ def read_wifipoints():
 def link_buttons(obj, wifi):
     obj.wifi_page_label_text.setText(wifi)
     obj.stackedWidget.setCurrentWidget(obj.wifi_page)
+
+
+
 
 
 class MainWindow(QMainWindow):
@@ -357,25 +361,46 @@ class MainWindow(QMainWindow):
         series.attachAxis(axisX)
         series.attachAxis(axisY)
 
-        chart_view = QtCharts.QChartView(chart)
-        chart_view.setRenderHint(QPainter.Antialiasing)
+        # chart_view = QtCharts.QChartView(chart)
+        # chart_view.setRenderHint(QPainter.Antialiasing)
+        #
+        # chart_view = QtCharts.QChartView(chart)
+        # chart_view.setRenderHint(QPainter.Antialiasing)
+        # chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
+        # chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+        #
+        # sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # sizePolicy.setHorizontalStretch(0)
+        # sizePolicy.setVerticalStretch(0)
+        # sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
+        # chart_view.setSizePolicy(sizePolicy)
+        # chart_view.setMinimumSize(QSize(0, 10))
 
-        chart_view = QtCharts.QChartView(chart)
-        chart_view.setRenderHint(QPainter.Antialiasing)
-        chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
-        chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+        self.chart_view = pg.PlotWidget()
+        self.x = list(range(100))  # 100 time points
+        self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
+        self.chart_view.setBackground('black')
 
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(chart_view.sizePolicy().hasHeightForWidth())
-        chart_view.setSizePolicy(sizePolicy)
-        chart_view.setMinimumSize(QSize(0, 10))
+        pen = pg.mkPen(color=(255, 255, 255))
+        self.data_line = self.chart_view.plot(self.x, self.y, pen=pen)
 
-        self.ui.wifi_page_graph_cont.addWidget(chart_view, 0, 0, 9, 9)
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(200)
+        self.timer.timeout.connect(self.update_plot_data)
+        self.timer.start()
+
+        self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
+
         # self.ui.Graph_Box.setStyleSheet(u"background-color: transparent")
 
+    def update_plot_data(self):
+        self.x = self.x[1:]  # Remove the first y element.
+        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
+        self.y = self.y[1:]  # Remove the first
+        self.y.append(randint(0, 100))  # Add a new random value.
+
+        self.data_line.setData(self.x, self.y)  # Update the data.
 wifi_points = []
 
 if __name__ == "__main__":
