@@ -58,9 +58,6 @@ def link_buttons(obj, wifi):
     obj.stackedWidget.setCurrentWidget(obj.wifi_page)
 
 
-
-
-
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self)
@@ -80,7 +77,7 @@ class MainWindow(QMainWindow):
 
         self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
         self.ui.scrollArea.setObjectName(u"scrollArea")
-        self.ui.scrollArea.setMaximumSize(QSize(16777215, 270))
+        self.ui.scrollArea.setMaximumSize(QSize(1500, 270))
 
         self.ui.scrollArea.setWidgetResizable(True)
         self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -88,39 +85,6 @@ class MainWindow(QMainWindow):
         self.ui.scrollAreaWidgetContents = QWidget()
         self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.ui.vbox = QVBoxLayout()
-        for i in range(len(wifi_points)):
-            self.ui.wifi_list = {}
-            key = 'list_wifi_frame' + str(i)
-            self.ui.wifi_list[key] = QFrame()
-            self.ui.wifi_list[key].setObjectName(key)
-            self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            self.ui.wifi_list[key].setMinimumSize(QSize(123456, 40))
-
-            btnKey = 'list_wifi_pushButton' + str(i)
-            self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
-            self.ui.wifi_list[btnKey].setObjectName(btnKey)
-            self.ui.wifi_list[btnKey].setGeometry(QRect(650, 0, 80, 23))
-            self.ui.wifi_list[btnKey].setStyleSheet('border: 1px solid #fff')
-
-            labelKey = 'list_wifi_label_' + str(i)
-            self.ui.wifi_list[labelKey] = QLabel(self.ui.wifi_list[key])
-            self.ui.wifi_list[labelKey].setObjectName(labelKey)
-            self.ui.wifi_list[labelKey].setGeometry(QRect(20, 10, 261, 50))
-            self.ui.wifi_list[labelKey].setAlignment(Qt.AlignLeft)
-
-            self.ui.wifi_list[btnKey].setText(QCoreApplication.translate("MainWindow", u"Go", None))
-
-            wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
-
-            wifi_info = 'WiFi name: ' + str(wifi_points[i]['name']) + '\n' + \
-                        'MAC address: ' + str(wifi_points[i]['MAC']) + '\n' + \
-                        'Channel: ' + str(wifi_points[i]['channel']) + '\n' + \
-                        'Power: ' + str(wifi_points[i]['power']) + '\n' + \
-                        'Privacy: ' + str(wifi_points[i]['privacy']) + '\n'
-
-            self.ui.wifi_list[labelKey].setText(QCoreApplication.translate("MainWindow", wifi, None))
-            self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
-            self.ui.vbox.addWidget(self.ui.wifi_list[key])
 
         self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
         self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
@@ -133,6 +97,34 @@ class MainWindow(QMainWindow):
         self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
         # for
+        for i in range(len(wifi_points)):
+            self.ui.wifi_list = {}
+            key = 'list_wifi_frame' + str(i)
+            self.ui.wifi_list[key] = QFrame()
+            self.ui.wifi_list[key].setObjectName(key)
+            self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            self.ui.wifi_list[key].setMinimumSize(QSize(1500, 40))
+            self.ui.frame_width = self.ui.wifi_list[key].width()
+            self.ui.frame_height = self.ui.wifi_list[key].height()
+            print(self.ui.frame_width, self.ui.frame_height)
+
+            btnKey = 'list_wifi_pushButton' + str(i)
+            self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
+            self.ui.wifi_list[btnKey].setObjectName(btnKey)
+            self.ui.wifi_list[btnKey].setMinimumSize(self.ui.frame_width, 30)
+            self.ui.wifi_list[btnKey].setStyleSheet('text-align: left')
+
+            wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
+
+            wifi_info = 'WiFi name: ' + str(wifi_points[i]['name']) + '\n' + \
+                        'MAC address: ' + str(wifi_points[i]['MAC']) + '\n' + \
+                        'Channel: ' + str(wifi_points[i]['channel']) + '\n' + \
+                        'Power: ' + str(wifi_points[i]['power']) + '\n' + \
+                        'Privacy: ' + str(wifi_points[i]['privacy']) + '\n'
+
+            self.ui.wifi_list[btnKey].setText(wifi)
+            self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
+            self.ui.vbox.addWidget(self.ui.wifi_list[key])
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
@@ -401,6 +393,8 @@ class MainWindow(QMainWindow):
         self.y.append(randint(0, 100))  # Add a new random value.
 
         self.data_line.setData(self.x, self.y)  # Update the data.
+
+
 wifi_points = []
 
 if __name__ == "__main__":
