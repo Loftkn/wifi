@@ -38,6 +38,7 @@ def general_scan():
                       '-w', 'general',
                       '--output-format', 'csv',
                       '--background', '1',
+                      '-b', 'abg',
                       '-I', '1',
                       MONINTERFACE])
 
