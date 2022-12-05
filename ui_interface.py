@@ -115,21 +115,6 @@ class Ui_MainWindow(object):
         self.frame_12.setFrameShadow(QFrame.Raised)
         self.verticalLayout_4 = QVBoxLayout(self.frame_12)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.tools_btn = QPushButton(self.frame_12)
-        self.tools_btn.setObjectName(u"tools_btn")
-        icon1 = QIcon()
-        icon1.addFile(u":/icons/icons/bar-chart-2.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.tools_btn.setIcon(icon1)
-
-        self.verticalLayout_4.addWidget(self.tools_btn)
-
-        self.topology_btn = QPushButton(self.frame_12)
-        self.topology_btn.setObjectName(u"topology_btn")
-        icon2 = QIcon()
-        icon2.addFile(u":/icons/icons/thermometer.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.topology_btn.setIcon(icon2)
-
-        self.verticalLayout_4.addWidget(self.topology_btn)
 
         self.nested_donut_btn = QPushButton(self.frame_12)
         self.nested_donut_btn.setObjectName(u"nested_donut_btn")
@@ -138,14 +123,6 @@ class Ui_MainWindow(object):
         self.nested_donut_btn.setIcon(icon3)
 
         self.verticalLayout_4.addWidget(self.nested_donut_btn)
-
-        self.wifi_page_btn = QPushButton(self.frame_12)
-        self.wifi_page_btn.setObjectName(u"wifi_page_btn")
-        icon4 = QIcon()
-        icon4.addFile(u":/icons/icons/git-merge.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.wifi_page_btn.setIcon(icon4)
-
-        self.verticalLayout_4.addWidget(self.wifi_page_btn)
 
         self.list_wifi_btn = QPushButton(self.frame_12)
         self.list_wifi_btn.setObjectName(u"list_wifi_btn")
@@ -498,10 +475,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.icon.setText("")
         self.text.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi Hunter", None))
-        self.tools_btn.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
-        self.topology_btn.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
         self.nested_donut_btn.setText(QCoreApplication.translate("MainWindow", u"Donuts with Wi-Fi", None))
-        self.wifi_page_btn.setText(QCoreApplication.translate("MainWindow", u"Wi-Fi page", None))
         self.list_wifi_btn.setText(QCoreApplication.translate("MainWindow", u"List Wi-Fi", None))
         self.open_close_side_bar_btn.setText(QCoreApplication.translate("MainWindow", u"MENU", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"DASHBOARD", None))

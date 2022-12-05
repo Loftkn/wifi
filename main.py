@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-
+import csv
+from pygame import mixer
+import time
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtGui import QPainter, QFontMetricsF, QPen, QColor, QPalette, QFont, QPolygon
@@ -9,17 +11,17 @@ from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QA
 from PySide2.QtCharts import QtCharts
 from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, Signal, QRect, QCoreApplication, QPoint
 import pyqtgraph as pg
-from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, QRect, QCoreApplication
 from random import randrange
 from functools import partial
-import csv
 from random import randint
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
 from PyQt5.QtCore import pyqtSlot as pyqtSlot, pyqtProperty as pyqtProperty
-
+from os import remove
 from ui_interface import Ui_MainWindow
+import threading
+import subprocess
 
 shadow_elements = {
     "left_menu_frame",
@@ -33,7 +35,8 @@ current_wifi = {}
 
 def read_wifipoints():
     global wifi_points
-    with open('data.csv', 'r') as file:
+    general_scan()
+    with open('data-01.csv', 'r') as file:
         csv_reader = csv.reader(file)
         next(csv_reader)
         next(csv_reader)
@@ -59,6 +62,87 @@ def read_wifipoints():
                               reverse=True))
 
 
+def single_scan(mac, channel):
+    global single_proc
+    clean()
+    single_proc = subprocess.Popen(['airodump-ng',
+                                    '-w', 'single',
+                                    '--output-format', 'csv',
+                                    '--background', '1',
+                                    '-I', '1',
+                                    '--bssid', mac,
+                                    '-c', channel,
+                                    SINGLEINTERFACE])
+    time.sleep(2)
+    track()
+
+
+def general_scan():
+    clean()
+    proc = subprocess.Popen(['airodump-ng',
+                             '-w', 'data',
+                             '--output-format', 'csv',
+                             '--background', '1',
+                             '-b', 'abg',
+                             '-I', '1',
+                             GENINTERFACE])
+    time.sleep(5)
+    proc.kill()
+
+
+def clean():
+    try:
+        remove('data-01.csv')
+    except FileNotFoundError:
+        pass
+    try:
+        remove('single-01.csv')
+    except FileNotFoundError:
+        pass
+
+
+def beep():
+    mixer.init()
+    sound = mixer.Sound("sound.wav")
+    sound.play()
+
+
+def show_data():
+    with open('single-01.csv', 'r') as csv_file:
+        reader = csv.reader(csv_file)
+
+        next(reader)
+        next(reader)
+
+        return abs(int(next(reader)[8].strip()))
+
+
+def track():
+    global is_scanning
+    MAX_TIME = 2.85
+    MIN_TIME = 0.15
+    MAX_POWER = 60
+    MIN_POWER = 10
+
+    last_pw = show_data()
+    delay = ((last_pw - MIN_POWER)/(MAX_POWER-MIN_POWER))*(MAX_TIME-MIN_TIME) + MIN_TIME
+
+    while True:
+        if not is_scanning:
+            break
+        beep()
+        time.sleep(delay)
+        current_pw = show_data()
+        delay = delay + ((current_pw - last_pw) * (MAX_TIME-MIN_TIME)) / (MAX_POWER-MIN_POWER)
+        if delay < MIN_TIME or current_pw < MIN_POWER:
+            current_pw = MIN_POWER
+            delay = MIN_TIME
+        if delay > MAX_TIME or current_pw > MAX_POWER:
+            current_pw = MAX_POWER
+            delay = MAX_TIME
+        last_pw = current_pw
+
+
 def link_buttons(obj, wifi):
     global current_wifi
     current_wifi = wifi
@@ -73,17 +157,22 @@ def link_buttons(obj, wifi):
 
 
 def toogle_button(obj):
+    global current_wifi, single_proc, is_scanning
     if obj.ui.checker:
+        is_scanning = True
+        thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
+        thr.start()
         obj.ui.pushButton.setText("Stop")
         obj.timer.start()
         obj.timer.timeout.connect(obj.update_plot_data)
         obj.ui.checker = False
     else:
+        is_scanning = False
+        single_proc.kill()
         obj.ui.pushButton.setText("Start")
         obj.ui.checker = True
         obj.clear_plot_data()
         obj.timer.stop()
-
 
 def list_wifi_btn_clicked(obj):
     obj.ui.stackedWidget.setCurrentWidget(obj.ui.list_wifi)
@@ -135,7 +224,6 @@ class MainWindow(QMainWindow):
         self.ui.horizontalSlider.setSingleStep(20)
         self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
-        # for
         for i in range(len(wifi_points)):
             self.ui.wifi_list = {}
             key = 'list_wifi_frame' + str(i)
@@ -204,10 +292,10 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        self.ui.tools_btn.clicked.connect(lambda: read_wifipoints())
-        self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        #self.ui.tools_btn.clicked.connect(lambda: read_wifipoints())
+        #self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
+        #self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
         # self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
 
@@ -338,9 +426,14 @@ class MainWindow(QMainWindow):
 
     def create_list_wifi(self):
         global wifi_points
+        global optimum_length
         categories = []
         low = QtCharts.QBarSet("Power")
-        for i in range(10):
+        if len(wifi_points) > 10:
+            optimum_length = 10
+        else:
+            optimum_length = len(wifi_points)
+        for i in range(optimum_length):
             pwr = wifi_points[i]["power"]
             low.append(pwr)
             wifi_name_mac = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
@@ -519,6 +612,12 @@ class CompassWidget(QWidget):
 
 
 wifi_points = []
+single_proc = None
+current_wifi = None
+optimum_length = None
+is_scanning = None
+SINGLEINTERFACE = 'wlan0mon'
+GENINTERFACE = 'wlp0s20f3mon'
 
 if __name__ == "__main__":
     read_wifipoints()
