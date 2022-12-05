@@ -420,7 +420,6 @@ class MainWindow(QMainWindow):
         self.y = [50 for _ in range(100)]  # 100 data points
 
         self.data_line.setData(self.x, self.y)  # Update the data.
-        print("clear", self.y)
 
     def topology(self):
         self.figure = plt.figure()

@@ -374,22 +374,26 @@ class Ui_MainWindow(object):
 
         self.pushButton = QPushButton(self.frame_2)
         self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setStyleSheet('background-color: transparent; border: 1px solid #fff; border-radius: 15px; '
+                                      'font-size: 20px; padding: 20')
 
         self.gridLayout_4.addWidget(self.pushButton, 1, 0, 1, 1)
 
         self.pushButton_2 = QPushButton(self.frame_2)
         self.pushButton_2.setObjectName(u"pushButton_3")
+        self.pushButton_2.setStyleSheet('background-color: transparent; border: 1px solid #fff; border-radius: 15px; '
+                                        'font-size: 15px; padding: 22 10')
 
         self.gridLayout_4.addWidget(self.pushButton_2, 1, 2, 1, 1)
 
         self.wifi_page_label_text = QLabel(self.frame_2)
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
         self.wifi_page_label_text.setAlignment(Qt.AlignLeft)
-        self.wifi_page_label_text.setStyleSheet('font-size: 15px; font-weight: bold')
+        self.wifi_page_label_text.setStyleSheet('font-size: 15px; background-color: transparent')
         self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 
         self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)
-#        self.wifi_page_info_cont.setMaximumSize(QSize(16777215, 16777215))
+        #        self.wifi_page_info_cont.setMaximumSize(QSize(16777215, 16777215))
 
         self.frame = QFrame(self.groupBox_2)
         self.frame.setObjectName(u"frame")
@@ -441,7 +445,6 @@ class Ui_MainWindow(object):
         self.topology.setObjectName(u"topology")
         self.verticalLayout_9 = QVBoxLayout(self.topology)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-
 
         self.topology_frame_2 = QFrame(self.topology)
         self.topology_frame_2.setObjectName(u"topology_frame_2")
