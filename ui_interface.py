@@ -385,7 +385,7 @@ class Ui_MainWindow(object):
         self.wifi_page_label_text = QLabel(self.frame_2)
         self.wifi_page_label_text.setObjectName(u"wifi_page_label_text")
         self.wifi_page_label_text.setAlignment(Qt.AlignLeft)
-        self.wifi_page_label_text.setFont(QFont('Arial font', 30))
+        self.wifi_page_label_text.setStyleSheet('font-size: 15px; font-weight: bold')
         self.gridLayout_4.addWidget(self.wifi_page_label_text, 0, 0, 1, 1)
 
         self.wifi_page_info_cont.addWidget(self.frame_2, 0, 0, 1, 1)

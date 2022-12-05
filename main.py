@@ -3,7 +3,7 @@
 
 import sys
 from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtGui import QPainter, QFontMetricsF,QPen,QColor, QPalette, QFont, QPolygon
+from PySide2.QtGui import QPainter, QFontMetricsF, QPen, QColor, QPalette, QFont, QPolygon
 from PySide2.QtWidgets import QMainWindow, QWidget, QScrollArea, QVBoxLayout, QApplication, QGraphicsDropShadowEffect, \
     QSizeGrip, QSizePolicy, QFrame, QPushButton, QLabel, QSpinBox
 from PySide2.QtCharts import QtCharts
@@ -28,6 +28,7 @@ shadow_elements = {
     "header_frame",
     "frame_9"
 }
+current_wifi = {}
 
 
 def read_wifipoints():
@@ -59,25 +60,39 @@ def read_wifipoints():
 
 
 def link_buttons(obj, wifi):
-    obj.wifi_page_label_text.setText(wifi)
+    global current_wifi
+    current_wifi = wifi
+    string = 'WiFi name: ' + str(wifi['name']) + '\n' + \
+             'MAC address: ' + str(wifi['MAC']) + '\n' + \
+             'Channel: ' + str(wifi['channel']) + '\n' + \
+             'Power: ' + str(wifi['power']) + '\n' + \
+             'Privacy: ' + str(wifi['privacy']) + '\n'
+
+    obj.wifi_page_label_text.setText(string)
     obj.stackedWidget.setCurrentWidget(obj.wifi_page)
 
 
 def toogle_button(obj):
     if obj.ui.checker:
         obj.ui.pushButton.setText("Stop")
-        obj.x = list(range(100))  # 100 time points
-        obj.y = [0 for _ in range(100)]  # 100 data points
         obj.timer.start()
         obj.timer.timeout.connect(obj.update_plot_data)
         obj.ui.checker = False
     else:
         obj.ui.pushButton.setText("Start")
         obj.ui.checker = True
-
-        obj.x.clear()
-        obj.y.clear()
+        obj.clear_plot_data()
         obj.timer.stop()
+
+
+def list_wifi_btn_clicked(obj):
+    obj.ui.stackedWidget.setCurrentWidget(obj.ui.list_wifi)
+    current_wifi = {}
+    obj.clear_plot_data()
+    obj.timer.stop()
+    obj.ui.checker = True
+    obj.ui.pushButton.setText("Start")
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -139,11 +154,12 @@ class MainWindow(QMainWindow):
 
             wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
 
-            wifi_info = 'WiFi name: ' + str(wifi_points[i]['name']) + '\n' + \
-                        'MAC address: ' + str(wifi_points[i]['MAC']) + '\n' + \
-                        'Channel: ' + str(wifi_points[i]['channel']) + '\n' + \
-                        'Power: ' + str(wifi_points[i]['power']) + '\n' + \
-                        'Privacy: ' + str(wifi_points[i]['privacy']) + '\n'
+            wifi_info = {'name': wifi_points[i]['name'],
+                         'MAC': wifi_points[i]['MAC'],
+                         'channel': wifi_points[i]['channel'],
+                         'power': wifi_points[i]['power'],
+                         'privacy': wifi_points[i]['privacy']
+                         }
 
             self.ui.wifi_list[btnKey].setText(wifi)
             self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
@@ -193,7 +209,7 @@ class MainWindow(QMainWindow):
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
         # self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
-        self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
+        self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
 
         self.create_list_wifi()
         self.create_nested_donuts()
@@ -366,7 +382,7 @@ class MainWindow(QMainWindow):
     def create_wifi_page(self):
         self.chart_view = pg.PlotWidget()
         self.x = list(range(100))  # 100 time points
-        self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
+        self.y = [50 for _ in range(100)]  # 100 data points
         self.chart_view.setBackground('black')
 
         pen = pg.mkPen(color=(255, 255, 255))
@@ -396,6 +412,16 @@ class MainWindow(QMainWindow):
 
         self.data_line.setData(self.x, self.y)  # Update the data.
 
+    def clear_plot_data(self):
+        self.x.clear()
+        self.y.clear()
+
+        self.x = list(range(100))  # 100 time points
+        self.y = [50 for _ in range(100)]  # 100 data points
+
+        self.data_line.setData(self.x, self.y)  # Update the data.
+        print("clear", self.y)
+
     def topology(self):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -414,15 +440,17 @@ class MainWindow(QMainWindow):
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
 
-class CompassWidget(QWidget):
 
+class CompassWidget(QWidget):
     angleChanged = Signal(float)
-    def __init__(self, parent = None):
+
+    def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self._angle = 0.0
         self._margins = 10
         self._pointText = {0: "N", 45: "NE", 90: "E", 135: "SE", 180: "S",
                            225: "SW", 270: "W", 315: "NW"}
+
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
@@ -431,58 +459,65 @@ class CompassWidget(QWidget):
         self.drawMarkings(painter)
         self.drawNeedle(painter)
         painter.end()
+
     def drawMarkings(self, painter):
         painter.save()
-        painter.translate(self.width()/2, self.height()/2)
-        scale = min((self.width() - self._margins)/120.0,
-                    (self.height() - self._margins)/120.0)
+        painter.translate(self.width() / 2, self.height() / 2)
+        scale = min((self.width() - self._margins) / 120.0,
+                    (self.height() - self._margins) / 120.0)
         painter.scale(scale, scale)
         font = QFont(self.font())
         font.setPixelSize(10)
         metrics = QFontMetricsF(font)
         painter.setFont(font)
-        painter.setPen(self.palette().color(QPalette.Shadow))
+        painter.setPen(self.palette().color(QPalette.Highlight))
         i = 0
         while i < 360:
             if i % 45 == 0:
-               painter.drawLine(0, -40, 0, -50)
-               painter.drawText(-metrics.width(self._pointText[i])/2.0, -52,
+                painter.drawLine(0, -40, 0, -50)
+                painter.drawText(-metrics.width(self._pointText[i]) / 2.0, -52,
                                  self._pointText[i])
             else:
-               painter.drawLine(0, -45, 0, -50)
+                painter.drawLine(0, -45, 0, -50)
             painter.rotate(15)
             i += 15
         painter.restore()
+
     def drawNeedle(self, painter):
-       painter.save()
-       painter.translate(self.width()/2, self.height()/2)
-       painter.rotate(self._angle)
-       scale = min((self.width() - self._margins)/120.0,
-                    (self.height() - self._margins)/120.0)
-       painter.scale(scale, scale)
-       painter.setPen(QPen(Qt.NoPen))
-       painter.setBrush(self.palette().brush(QPalette.Shadow))
-       painter.drawPolygon(
-       QPolygon([QPoint(-10, 0), QPoint(0, -45), QPoint(10, 0),
+        painter.save()
+        painter.translate(self.width() / 2, self.height() / 2)
+        painter.rotate(self._angle)
+        scale = min((self.width() - self._margins) / 120.0,
+                    (self.height() - self._margins) / 120.0)
+        painter.scale(scale, scale)
+        painter.setPen(QPen(Qt.NoPen))
+        painter.setBrush(self.palette().brush(QPalette.Shadow))
+        painter.drawPolygon(
+            QPolygon([QPoint(-10, 0), QPoint(0, -45), QPoint(10, 0),
                       QPoint(0, 45), QPoint(-10, 0)])
-       )
-       painter.setBrush(self.palette().brush(QPalette.Highlight))
-       painter.drawPolygon(
-          QPolygon([QPoint(-5, -25), QPoint(0, -45), QPoint(5, -25),
-                     QPoint(0, -30), QPoint(-5, -25)])
-       )
-       painter.restore()
+        )
+        painter.setBrush(self.palette().brush(QPalette.Highlight))
+        painter.drawPolygon(
+            QPolygon([QPoint(-5, -25), QPoint(0, -45), QPoint(5, -25),
+                      QPoint(0, -30), QPoint(-5, -25)])
+        )
+        painter.restore()
+
     def sizeHint(self):
-       return QSize(150, 150)
+        return QSize(150, 150)
+
     def angle(self):
-       return self._angle
+        return self._angle
+
     @pyqtSlot(float)
     def setAngle(self, angle):
         if angle != self._angle:
             self._angle = angle
             self.angleChanged.emit(angle)
             self.update()
+
     angle = pyqtProperty(float, angle, setAngle)
+
 
 wifi_points = []
 
