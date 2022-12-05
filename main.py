@@ -17,8 +17,6 @@ from random import randint
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
-import PIL
-import pandas as pd
 
 from ui_interface import Ui_MainWindow
 
@@ -64,6 +62,22 @@ def link_buttons(obj, wifi):
     obj.stackedWidget.setCurrentWidget(obj.wifi_page)
 
 
+def toogle_button(obj):
+    if obj.ui.checker:
+        obj.ui.pushButton.setText("Stop")
+        obj.x = list(range(100))  # 100 time points
+        obj.y = [0 for _ in range(100)]  # 100 data points
+        obj.timer.start()
+        obj.timer.timeout.connect(obj.update_plot_data)
+        obj.ui.checker = False
+    else:
+        obj.ui.pushButton.setText("Start")
+        obj.ui.checker = True
+
+        obj.x.clear()
+        obj.y.clear()
+        obj.timer.stop()
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self)
@@ -84,6 +98,8 @@ class MainWindow(QMainWindow):
         self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
         self.ui.scrollArea.setObjectName(u"scrollArea")
         self.ui.scrollArea.setMaximumSize(QSize(1500, 270))
+
+        self.ui.checker = True
 
         self.ui.scrollArea.setWidgetResizable(True)
         self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -175,7 +191,7 @@ class MainWindow(QMainWindow):
         self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
-        #self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
+        # self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.ui.list_wifi_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi))
 
         self.create_list_wifi()
@@ -183,7 +199,9 @@ class MainWindow(QMainWindow):
         self.create_wifi_page()
         self.topology()
 
-        self.ui.pushButton_3.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
+        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+
     def restore_or_maximize_window(self):
         if self.isMaximized():
             self.showNormal()
@@ -250,7 +268,7 @@ class MainWindow(QMainWindow):
         for i in range(self.donut_count):
             donut = QtCharts.QPieSeries()
             if self.donut_count >= 5:
-                if len(wifi_points)/5 >= 5:
+                if len(wifi_points) / 5 >= 5:
                     slccount = 5
                 else:
                     slccount = 2
@@ -289,8 +307,8 @@ class MainWindow(QMainWindow):
             for i in range(idx + 1, len(self.donuts)):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
-            print(slc.label(),slc.value())
-#            slc.doubleClicked.connect(partial(link_buttons, self.ui, wifi_info))
+            print(slc.label(), slc.value())
+        #            slc.doubleClicked.connect(partial(link_buttons, self.ui, wifi_info))
 
         else:
             for donut in self.donuts:
@@ -347,28 +365,26 @@ class MainWindow(QMainWindow):
     def create_wifi_page(self):
         self.chart_view = pg.PlotWidget()
         self.x = list(range(100))  # 100 time points
-        self.y = [randint(0, 100) for _ in range(100)]  # 100 data points
+        self.y = [50 for _ in range(100)]  # 100 data points
         self.chart_view.setBackground('black')
 
         pen = pg.mkPen(color=(255, 255, 255))
         self.data_line = self.chart_view.plot(self.x, self.y, pen=pen)
 
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(200)
-        self.timer.timeout.connect(self.update_plot_data)
-        self.timer.start()
+        self.timer.setInterval(400)
         self.chart_view.setMaximumSize(QSize(16777215, 270))
         self.chart_view.setMinimumSize(QSize(16777215, 270))
         self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
 
     def update_plot_data(self):
-
+        print('call')
         self.x = self.x[1:]  # Remove the first y element.
         self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
         self.y = self.y[1:]  # Remove the first
-        #self.y.append(randint(0, 100))  # Add a new random value.
-        self.y.append(wifi_points[0]['power'])
+        # self.y.append(randint(0, 100))  # Add a new random value.
+        self.y.append(randint(0, 100))
 
         self.data_line.setData(self.x, self.y)  # Update the data.
 
@@ -384,6 +400,7 @@ class MainWindow(QMainWindow):
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
+
 
 wifi_points = []
 
