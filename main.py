@@ -17,8 +17,6 @@ from random import randint
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
-import PIL
-import pandas as pd
 from PyQt5.QtCore import pyqtSlot as pyqtSlot, pyqtProperty as pyqtProperty
 
 from ui_interface import Ui_MainWindow
