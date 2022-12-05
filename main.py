@@ -109,12 +109,13 @@ def beep():
 
 def show_data():
     with open('single-01.csv', 'r') as csv_file:
-        reader = csv.reader(csv_file)
-
-        next(reader)
-        next(reader)
-
-        return abs(int(next(reader)[8].strip()))
+        try:
+            reader = csv.reader(csv_file)
+            next(reader)
+            next(reader)
+            return abs(int(next(reader)[8].strip()))
+        except StopIteration:
+            return 50
 
 
 def track():
@@ -122,7 +123,7 @@ def track():
     MAX_TIME = 2.85
     MIN_TIME = 0.15
     MAX_POWER = 60
-    MIN_POWER = 10
+    MIN_POWER = 1
 
     last_pw = show_data()
     delay = ((last_pw - MIN_POWER)/(MAX_POWER-MIN_POWER))*(MAX_TIME-MIN_TIME) + MIN_TIME
@@ -159,20 +160,21 @@ def link_buttons(obj, wifi):
 def toogle_button(obj):
     global current_wifi, single_proc, is_scanning
     if obj.ui.checker:
+        obj.timer = QtCore.QTimer()
+        obj.timer.start(600)
+        obj.ui.pushButton.setText("Stop")
+        obj.timer.timeout.connect(obj.update_plot_data)
+        obj.ui.checker = False
         is_scanning = True
         thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
         thr.start()
-        obj.ui.pushButton.setText("Stop")
-        obj.timer.start()
-        obj.timer.timeout.connect(obj.update_plot_data)
-        obj.ui.checker = False
     else:
-        is_scanning = False
-        single_proc.kill()
+        obj.timer = None
         obj.ui.pushButton.setText("Start")
         obj.ui.checker = True
         obj.clear_plot_data()
-        obj.timer.stop()
+        is_scanning = False
+        single_proc.kill()
 
 def list_wifi_btn_clicked(obj):
     obj.ui.stackedWidget.setCurrentWidget(obj.ui.list_wifi)
@@ -181,6 +183,14 @@ def list_wifi_btn_clicked(obj):
     obj.timer.stop()
     obj.ui.checker = True
     obj.ui.pushButton.setText("Start")
+
+
+def close_app(obj):
+    global is_scanning
+    if not obj.ui.checker:
+        single_proc.kill()
+        is_scanning = False
+    obj.close()
 
 
 class MainWindow(QMainWindow):
@@ -270,7 +280,7 @@ class MainWindow(QMainWindow):
         QSizeGrip(self.ui.size_grip)
 
         self.ui.minimize_window_button.clicked.connect(lambda: self.showMinimized())
-        self.ui.close_window_button.clicked.connect(lambda: self.close())
+        self.ui.close_window_button.clicked.connect(lambda: close_app(self))
         self.ui.restore_window_button.clicked.connect(lambda: self.restore_or_maximize_window())
         self.ui.open_close_side_bar_btn.clicked.connect(lambda: self.slideLeftMenu())
 
@@ -481,8 +491,8 @@ class MainWindow(QMainWindow):
         pen = pg.mkPen(color=(255, 255, 255))
         self.data_line = self.chart_view.plot(self.x, self.y, pen=pen)
 
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(400)
+        #self.timer = QtCore.QTimer()
+        #self.timer.setInterval(600)
         self.chart_view.setMaximumSize(QSize(16777215, 270))
         self.chart_view.setMinimumSize(QSize(16777215, 270))
         self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
@@ -495,15 +505,18 @@ class MainWindow(QMainWindow):
         self.ui.gridLayout_3.addWidget(spinBox)
 
     def update_plot_data(self):
+        powerlvl = show_data()
+        if powerlvl:
+            self.x = self.x[1:]  # Remove the first y element.
+            self.y = self.y[1:]  # Remove the first
 
-        self.x = self.x[1:]  # Remove the first y element.
-        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+            # self.y.append(randint(0, 100))  # Add a new random value.
+            self.y.append(100 - show_data())
 
-        self.y = self.y[1:]  # Remove the first
-        # self.y.append(randint(0, 100))  # Add a new random value.
-        self.y.append(randint(0, 100))
+            self.data_line.setData(self.x, self.y)  # Update the data.
+            powelvl = None
 
-        self.data_line.setData(self.x, self.y)  # Update the data.
 
     def clear_plot_data(self):
         self.x.clear()
