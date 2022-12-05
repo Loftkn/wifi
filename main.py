@@ -114,7 +114,7 @@ def show_data():
             next(reader)
             next(reader)
             return abs(int(next(reader)[8].strip()))
-        except StopIteration:
+        except (StopIteration, IndexError):
             return 50
 
 
@@ -177,10 +177,14 @@ def toogle_button(obj):
         single_proc.kill()
 
 def list_wifi_btn_clicked(obj):
+    global current_wifi, is_scanning
     obj.ui.stackedWidget.setCurrentWidget(obj.ui.list_wifi)
     current_wifi = {}
     obj.clear_plot_data()
-    obj.timer.stop()
+    if not obj.ui.checker:
+        single_proc.kill()
+        is_scanning = False
+    #obj.timer.stop()
     obj.ui.checker = True
     obj.ui.pushButton.setText("Start")
 
@@ -515,8 +519,7 @@ class MainWindow(QMainWindow):
             self.y.append(100 - show_data())
 
             self.data_line.setData(self.x, self.y)  # Update the data.
-            powelvl = None
-
+            powerlvl = None
 
     def clear_plot_data(self):
         self.x.clear()

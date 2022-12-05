@@ -351,14 +351,14 @@ class Ui_MainWindow(object):
 
         self.pushButton = QPushButton(self.frame_2)
         self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setStyleSheet('background-color: transparent; border: 1px solid #fff; border-radius: 15px; '
+        self.pushButton.setStyleSheet('background-color: #FF5722; border-radius: 15px; '
                                       'font-size: 20px; padding: 20')
 
         self.gridLayout_4.addWidget(self.pushButton, 1, 0, 1, 1)
 
         self.pushButton_2 = QPushButton(self.frame_2)
         self.pushButton_2.setObjectName(u"pushButton_3")
-        self.pushButton_2.setStyleSheet('background-color: transparent; border: 1px solid #fff; border-radius: 15px; '
+        self.pushButton_2.setStyleSheet('background-color: #FF5722; border-radius: 15px; '
                                         'font-size: 15px; padding: 22 10')
 
         self.gridLayout_4.addWidget(self.pushButton_2, 1, 2, 1, 1)
