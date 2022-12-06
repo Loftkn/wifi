@@ -3,3 +3,4 @@ venv
 .flake8
 *csv
 test*
+.idea
