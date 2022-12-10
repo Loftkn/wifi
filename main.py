@@ -22,6 +22,7 @@ from os import remove
 from ui_interface import Ui_MainWindow
 import threading
 import subprocess
+import PIL
 
 shadow_elements = {
     "left_menu_frame",
@@ -216,7 +217,7 @@ class MainWindow(QMainWindow):
 
         self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
         self.ui.scrollArea.setObjectName(u"scrollArea")
-        self.ui.scrollArea.setMaximumSize(QSize(1500, 270))
+        self.ui.scrollArea.setMaximumSize(QSize(126700123, 270))
 
         self.ui.checker = True
 
@@ -228,15 +229,15 @@ class MainWindow(QMainWindow):
         self.ui.vbox = QVBoxLayout()
 
         self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
-        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 817, 270))
+        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 12345, 270))
         self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
-        self.ui.verticalLayout_14.addWidget(self.ui.scrollArea)
-        self.ui.horizontalSlider.setMinimum(2400)
-        self.ui.horizontalSlider.setMaximum(5500)
-        self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksAbove)
-        self.ui.horizontalSlider.setTickInterval(20)
-        self.ui.horizontalSlider.setSingleStep(20)
-        self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
+        self.ui.gridLayout_7.addWidget(self.ui.scrollArea)
+        #self.ui.horizontalSlider.setMinimum(2400)
+        #self.ui.horizontalSlider.setMaximum(5500)
+        #self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksAbove)
+        #self.ui.horizontalSlider.setTickInterval(20)
+        #self.ui.horizontalSlider.setSingleStep(20)
+        #self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
 
         for i in range(len(wifi_points)):
             self.ui.wifi_list = {}
@@ -244,7 +245,7 @@ class MainWindow(QMainWindow):
             self.ui.wifi_list[key] = QFrame()
             self.ui.wifi_list[key].setObjectName(key)
             self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            self.ui.wifi_list[key].setMinimumSize(QSize(1500, 40))
+            self.ui.wifi_list[key].setMinimumSize(QSize(167800, 40))
             self.ui.frame_width = self.ui.wifi_list[key].width()
             self.ui.frame_height = self.ui.wifi_list[key].height()
 
@@ -266,7 +267,6 @@ class MainWindow(QMainWindow):
             self.ui.wifi_list[btnKey].setText(wifi)
             self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
             self.ui.vbox.addWidget(self.ui.wifi_list[key])
-
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -306,17 +306,15 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        #self.ui.tools_btn.clicked.connect(lambda: read_wifipoints())
-        #self.ui.topology_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.tools))
         self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        #self.ui.wifi_page_btn.clicked.connect(partial(link_buttons, self.ui, "No Data"))
-        # self.ui.wifi_page_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.wifi_page))
         self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
 
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
         self.topology()
+        self.tools()
 
         self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
         self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
@@ -534,20 +532,64 @@ class MainWindow(QMainWindow):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
         wifi_point = wifi_points[0]['name']
+        ax = self.figure.gca()
         icons = {
-            wifi_point: "comp.png",
+            "wifi_point": "comp.png",
         }
 
+        images = {k: PIL.Image.open(fname) for k, fname in icons.items()}
+
         G = nx.Graph()
-        G.add_node(wifi_point)
+        G.add_node(wifi_point, image=images["wifi_point"], label="label")
+
         for i in range(len(wifi_points)):
-            G.add_node(wifi_points[i]['name'])
+            G.add_node(wifi_points[i]['name'], image=images["wifi_point"])
             G.add_edge(wifi_point, wifi_points[i]['name'])
+
+        pos = nx.spring_layout(G, seed=1734289230)
+
+        nx.draw_networkx_edges(
+            G,
+            pos=pos,
+            ax=ax,
+            arrows=True,
+            arrowstyle="<|-",
+            label="Connected",
+            min_source_margin=15,
+            min_target_margin=15,
+        )
+
+        tr_figure = ax.transData.transform
+        tr_axes = self.figure.transFigure.inverted().transform
+
+        icon_size = (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.025
+        icon_center = icon_size / 2.0
+
+        for n in G.nodes:
+            xf, yf = tr_figure(pos[n])
+            xa, ya = tr_axes((xf, yf))
+            a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
+            a.imshow(G.nodes[n]["image"])
+            a.axis("off")
 
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
 
+    def tools(self):
+        self.load_text = QLabel()
+        self.load_text.setObjectName(u"load_text")
+        self.load_text.setAlignment(Qt.AlignCenter)
+        #self.load_text.setStyleSheet('font-size: 15px; background-color: blue')
+        self.load_text.setText(QCoreApplication.translate("MainWindow", u"Load Info\nYou can skip it ", None))
+        self.ui.gridLayout_6.addWidget(self.load_text, 0, 0, 9, 9)
+        #self.ui.load_btn = {}
+        #btnKey = 'load_pushButton'
+        #self.ui.load_btn[btnKey] = QPushButton()
+        #self.ui.load_btn[btnKey].setObjectName(btnKey)
+        #self.ui.load_btn[btnKey].setMinimumSize(self.ui.frame_width, 30)
+        #self.ui.percentage_bar_chart_cont.addWidget(self.ui.load_btn[btnKey], 0, 0, 9, 9)
+        #self.ui.tools_frame.setStyleSheet(u"background-color: transparent")
 
 class CompassWidget(QWidget):
     angleChanged = Signal(float)
@@ -633,7 +675,7 @@ current_wifi = None
 optimum_length = None
 is_scanning = None
 SINGLEINTERFACE = 'wlan0mon'
-GENINTERFACE = 'wlp0s20f3mon'
+GENINTERFACE = 'wlan0mon'
 
 if __name__ == "__main__":
     read_wifipoints()

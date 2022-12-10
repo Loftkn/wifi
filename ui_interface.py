@@ -261,32 +261,39 @@ class Ui_MainWindow(object):
         self.tools.setObjectName(u"tools")
         self.verticalLayout_6 = QVBoxLayout(self.tools)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.tools_frame_13 = QFrame(self.tools)
-        self.tools_frame_13.setObjectName(u"tools_frame_13")
-        self.tools_frame_13.setFrameShape(QFrame.StyledPanel)
-        self.tools_frame_13.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_7 = QVBoxLayout(self.tools_frame_13)
-        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.tools_label_13 = QLabel(self.tools_frame_13)
-        self.tools_label_13.setObjectName(u"tools_label_13")
-        self.tools_label_13.setFont(font1)
-        self.tools_label_13.setStyleSheet(u"background-color: none;")
-        self.tools_label_13.setAlignment(Qt.AlignCenter)
-
-        self.verticalLayout_7.addWidget(self.tools_label_13, 0, Qt.AlignTop)
-
-        self.verticalLayout_6.addWidget(self.tools_frame_13, 0, Qt.AlignTop)
 
         self.tools_frame = QFrame(self.tools)
         self.tools_frame.setObjectName(u"tools_frame")
         sizePolicy.setHeightForWidth(self.tools_frame.sizePolicy().hasHeightForWidth())
         self.tools_frame.setSizePolicy(sizePolicy)
-        self.tools_frame.setMinimumSize(QSize(0, 300))
+        #self.tools_frame.setMinimumSize(QSize(0, 300))
+        self.tools_frame.setMaximumSize(QSize(126700, 1000))
         self.tools_frame.setStyleSheet(u"QFrame{background-color: none;}")
         self.tools_frame.setFrameShape(QFrame.StyledPanel)
         self.tools_frame.setFrameShadow(QFrame.Raised)
         self.percentage_bar_chart_cont = QGridLayout(self.tools_frame)
         self.percentage_bar_chart_cont.setObjectName(u"percentage_bar_chart_cont")
+        self.percentage_bar_chart_cont.setAlignment(Qt.AlignTop)
+        self.pushButton_4 = QPushButton(self.tools_frame)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+
+        self.percentage_bar_chart_cont.addWidget(self.pushButton_4, 2, 0, 1, 1)
+
+        self.widget = QWidget(self.tools_frame)
+        self.widget.setObjectName(u"widget")
+        self.widget.setMaximumSize(QSize(123450, 500))
+        #self.widget.setAlignment(Qt.AlignTop)
+        self.gridLayout_6 = QGridLayout(self.widget)
+        self.gridLayout_6.setObjectName(u"gridLayout_6")
+        self.gridLayout_6.setAlignment(Qt.AlignTop)
+
+        self.percentage_bar_chart_cont.addWidget(self.widget, 0, 0, 1, 1)
+
+        self.progressBar = QProgressBar(self.tools_frame)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setValue(100)
+
+        self.percentage_bar_chart_cont.addWidget(self.progressBar, 1, 0, 1, 1)
 
         self.verticalLayout_6.addWidget(self.tools_frame)
 
@@ -392,8 +399,8 @@ class Ui_MainWindow(object):
         self.list_wifi_frame_19.setObjectName(u"list_wifi_frame_19")
         self.list_wifi_frame_19.setFrameShape(QFrame.StyledPanel)
         self.list_wifi_frame_19.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_14 = QVBoxLayout(self.list_wifi_frame_19)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.gridLayout_5 = QGridLayout(self.list_wifi_frame_19)
+        self.gridLayout_5.setObjectName(u"verticalLayout_14")
         self.list_wifi_frame_18 = QFrame(self.list_wifi_frame_19)
         self.list_wifi_frame_18.setObjectName(u"list_wifi_frame_18")
         self.list_wifi_frame_18.setEnabled(True)
@@ -407,13 +414,32 @@ class Ui_MainWindow(object):
         self.list_wifi_cont.setObjectName(u"list_wifi_cont")
         self.list_wifi_cont.setSizeConstraint(QLayout.SetNoConstraint)
 
-        self.verticalLayout_14.addWidget(self.list_wifi_frame_18)
+        self.gridLayout_5.addWidget(self.list_wifi_frame_18, 0, 0, 1, 3)
 
-        self.horizontalSlider = QSlider(self.list_wifi_frame_19)
-        self.horizontalSlider.setObjectName(u"horizontalSlider")
-        self.horizontalSlider.setOrientation(Qt.Horizontal)
+        self.pushButton_5 = QPushButton(self.list_wifi_frame_19)
+        self.pushButton_5.setObjectName(u"pushButton_5")
 
-        self.verticalLayout_14.addWidget(self.horizontalSlider)
+        self.gridLayout_5.addWidget(self.pushButton_5, 1, 0, 1, 1)
+
+        self.pushButton_6 = QPushButton(self.list_wifi_frame_19)
+        self.pushButton_6.setObjectName(u"pushButton_6")
+
+        self.gridLayout_5.addWidget(self.pushButton_6, 1, 1, 1, 1)
+
+        self.pushButton_7 = QPushButton(self.list_wifi_frame_19)
+        self.pushButton_7.setObjectName(u"pushButton_7")
+
+        self.gridLayout_5.addWidget(self.pushButton_7, 1, 2, 1, 1)
+
+        self.frame_5 = QFrame(self.list_wifi_frame_19)
+        self.frame_5.setObjectName(u"frame_5")
+        self.frame_5.setFrameShape(QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Raised)
+        self.frame_5.setMaximumSize(QSize(16777215, 270))
+        self.gridLayout_7 = QGridLayout(self.frame_5)
+        self.gridLayout_7.setObjectName(u"gridLayout_7")
+
+        self.gridLayout_5.addWidget(self.frame_5, 2, 0, 1, 3)
 
         self.verticalLayout_15.addWidget(self.list_wifi_frame_19)
 
@@ -482,12 +508,15 @@ class Ui_MainWindow(object):
         self.minimize_window_button.setText("")
         self.restore_window_button.setText("")
         self.close_window_button.setText("")
-        self.tools_label_13.setText(QCoreApplication.translate("MainWindow", u"List wifi", None))
         self.donuts_label_15.setText(QCoreApplication.translate("MainWindow", u"Donuts", None))
         self.groupBox.setTitle("")
         self.groupBox_2.setTitle("")
         self.wifi_page_label_text.setText(QCoreApplication.translate("MainWindow", u"No Info", None))
         self.size_grip.setText("")
         self.pushButton.setText("Start")
+        self.pushButton_4.setText("Skip")
+        self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"2.4ГГц", None))
+        self.pushButton_6.setText(QCoreApplication.translate("MainWindow", u"5.0ГГц", None))
+        self.pushButton_7.setText(QCoreApplication.translate("MainWindow", u"Все", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
     # retranslateUi

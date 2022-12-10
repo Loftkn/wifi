@@ -35,8 +35,7 @@ class CompassWidget(QWidget):
         font.setPixelSize(10)
         metrics = QFontMetricsF(font)
         painter.setFont(font)
-        #painter.setPen(self.palette().color(QPalette.Shadow))
-        painter.setPen(self.palette().color(white))
+        painter.setPen(self.palette().color(QPalette.Shadow))
         i = 0
         while i < 360:
             if i % 45 == 0:
