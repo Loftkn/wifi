@@ -13,7 +13,6 @@ from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, Signal, QRect,
 import pyqtgraph as pg
 from random import randrange
 from functools import partial
-from random import randint
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
@@ -118,6 +117,20 @@ def show_data():
             return 50
 
 
+def show_data_clients():
+    global clients
+    time.sleep(4)
+    with open('single-01.csv', 'r') as file:
+        clients = []
+        reader = csv.reader(file)
+        for _ in range(5):
+            next(reader)
+        for client in reader:
+            if client == []:
+                break
+            clients.append((client[0], client[3], client[5]))
+
+
 def track():
     global is_scanning
     MAX_TIME = 2.85
@@ -176,6 +189,7 @@ def toogle_button(obj):
         is_scanning = False
         single_proc.kill()
 
+
 def list_wifi_btn_clicked(obj):
     global current_wifi, is_scanning
     obj.ui.stackedWidget.setCurrentWidget(obj.ui.list_wifi)
@@ -194,6 +208,9 @@ def close_app(obj):
     if not obj.ui.checker:
         single_proc.kill()
         is_scanning = False
+    #if not obj.ui.topology.checker:
+    #    single_proc.kill()
+    #    is_scanning = False
     obj.close()
 
 
@@ -316,10 +333,10 @@ class MainWindow(QMainWindow):
         self.create_list_wifi()
         self.create_nested_donuts()
         self.create_wifi_page()
-        self.topology()
+        #self.topology()
 
         self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
-        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        self.ui.pushButton_2.clicked.connect(lambda: self.create_topology())
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
@@ -345,6 +362,14 @@ class MainWindow(QMainWindow):
         self.animation.setEndValue(newWidth)
         self.animation.setEasingCurve(QtCore.QEasingCurve.OutBounce)
         self.animation.start()
+
+    def create_topology(obj):
+        obj.ui.topology.checker = False
+        thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
+        thr.start()
+        show_data_clients()
+        obj.topology()
+        obj.ui.stackedWidget.setCurrentWidget(obj.ui.topology)
 
     def mousePressEvent(self, event):
         self.clickPosition = event.globalPos()
@@ -531,21 +556,23 @@ class MainWindow(QMainWindow):
         self.data_line.setData(self.x, self.y)  # Update the data.
 
     def topology(self):
+        print("start")
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-        wifi_point = wifi_points[0]['name']
+        wifi_point = current_wifi['name']
         icons = {
             wifi_point: "comp.png",
         }
 
         G = nx.Graph()
         G.add_node(wifi_point)
-        for i in range(len(wifi_points)):
-            G.add_node(wifi_points[i]['name'])
-            G.add_edge(wifi_point, wifi_points[i]['name'])
+        for i in range(len(clients)):
+            G.add_node(clients[i][0])
+            G.add_edge(wifi_point, clients[i][0])
 
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
+        print("end")
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
 
 
@@ -632,8 +659,12 @@ single_proc = None
 current_wifi = None
 optimum_length = None
 is_scanning = None
+clients = None
 SINGLEINTERFACE = 'wlan0mon'
 GENINTERFACE = 'wlp0s20f3mon'
+#SINGLEINTERFACE = 'wlp0s20f3mon'
+#GENINTERFACE = 'wlp0s20f3mon'
+#wlp0s20f3mon
 
 if __name__ == "__main__":
     read_wifipoints()
