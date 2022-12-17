@@ -747,7 +747,7 @@ optimum_length = None
 is_scanning = None
 clients = None
 skipped = False
-SINGLEINTERFACE = 'wlp0s20f3mon'
+SINGLEINTERFACE = 'wlan0mon'
 GENINTERFACE = 'wlp0s20f3mon'
 
 if __name__ == "__main__":
