@@ -22,7 +22,6 @@ from os import remove
 from ui_interface import Ui_MainWindow
 import threading
 import subprocess
-import PIL
 
 shadow_elements = {
     "left_menu_frame",
@@ -36,7 +35,6 @@ current_wifi = {}
 
 def read_wifipoints():
     global wifi_points
-    wifi_points = []
     general_scan()
     with open('data-01.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -120,6 +118,20 @@ def show_data():
             return 50
 
 
+def show_data_clients():
+    global clients
+    time.sleep(4)
+    with open('single-01.csv', 'r') as file:
+        clients = []
+        reader = csv.reader(file)
+        for _ in range(5):
+            next(reader)
+        for client in reader:
+            if client == []:
+                break
+            clients.append((client[0], client[3], client[5]))
+
+
 def track():
     global is_scanning
     MAX_TIME = 2.85
@@ -177,6 +189,7 @@ def toogle_button(obj):
         obj.clear_plot_data()
         is_scanning = False
         single_proc.kill()
+
 
 def list_wifi_btn_clicked(obj):
     global current_wifi, is_scanning
@@ -314,6 +327,14 @@ class MainWindow(QMainWindow):
         self.animation.setEndValue(newWidth)
         self.animation.setEasingCurve(QtCore.QEasingCurve.OutBounce)
         self.animation.start()
+
+    def create_topology(obj):
+        obj.ui.topology.checker = False
+        thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
+        thr.start()
+        show_data_clients()
+        obj.topology()
+        obj.ui.stackedWidget.setCurrentWidget(obj.ui.topology)
 
     def mousePressEvent(self, event):
         self.clickPosition = event.globalPos()
@@ -565,46 +586,16 @@ class MainWindow(QMainWindow):
     def topology(self):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
-        wifi_point = wifi_points[0]['name']
-        ax = self.figure.gca()
+        wifi_point = current_wifi['name']
         icons = {
-            "wifi_point": "comp.png",
+            wifi_point: "comp.png",
         }
 
-        images = {k: PIL.Image.open(fname) for k, fname in icons.items()}
-
         G = nx.Graph()
-        G.add_node(wifi_point, image=images["wifi_point"], label="label")
-
-        for i in range(len(wifi_points)):
-            G.add_node(wifi_points[i]['name'], image=images["wifi_point"])
-            G.add_edge(wifi_point, wifi_points[i]['name'])
-
-        pos = nx.spring_layout(G, seed=1734289230)
-
-        nx.draw_networkx_edges(
-            G,
-            pos=pos,
-            ax=ax,
-            arrows=True,
-            arrowstyle="<|-",
-            label="Connected",
-            min_source_margin=15,
-            min_target_margin=15,
-        )
-
-        tr_figure = ax.transData.transform
-        tr_axes = self.figure.transFigure.inverted().transform
-
-        icon_size = (ax.get_xlim()[1] - ax.get_xlim()[0]) * 0.025
-        icon_center = icon_size / 2.0
-
-        for n in G.nodes:
-            xf, yf = tr_figure(pos[n])
-            xa, ya = tr_axes((xf, yf))
-            a = plt.axes([xa - icon_center, ya - icon_center, icon_size, icon_size])
-            a.imshow(G.nodes[n]["image"])
-            a.axis("off")
+        G.add_node(wifi_point)
+        for i in range(len(clients)):
+            G.add_node(clients[i][0])
+            G.add_edge(wifi_point, clients[i][0])
 
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
@@ -703,8 +694,9 @@ single_proc = None
 current_wifi = None
 optimum_length = None
 is_scanning = None
+clients = None
 SINGLEINTERFACE = 'wlan0mon'
-GENINTERFACE = 'wlan0mon'
+GENINTERFACE = 'wlp0s20f3mon'
 
 if __name__ == "__main__":
     read_wifipoints()
