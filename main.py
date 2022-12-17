@@ -36,6 +36,7 @@ current_wifi = {}
 
 def read_wifipoints():
     global wifi_points
+    wifi_points = []
     general_scan()
     with open('data-01.csv', 'r') as file:
         csv_reader = csv.reader(file)
@@ -215,58 +216,6 @@ class MainWindow(QMainWindow):
 
         self.ui.setupUi(self)
 
-        self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
-        self.ui.scrollArea.setObjectName(u"scrollArea")
-        self.ui.scrollArea.setMaximumSize(QSize(126700123, 270))
-
-        self.ui.checker = True
-
-        self.ui.scrollArea.setWidgetResizable(True)
-        self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.ui.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.ui.scrollAreaWidgetContents = QWidget()
-        self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.ui.vbox = QVBoxLayout()
-
-        self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
-        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 12345, 270))
-        self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
-        self.ui.gridLayout_7.addWidget(self.ui.scrollArea)
-        #self.ui.horizontalSlider.setMinimum(2400)
-        #self.ui.horizontalSlider.setMaximum(5500)
-        #self.ui.horizontalSlider.setTickPosition(self.ui.horizontalSlider.TicksAbove)
-        #self.ui.horizontalSlider.setTickInterval(20)
-        #self.ui.horizontalSlider.setSingleStep(20)
-        #self.ui.horizontalSlider.valueChanged.connect(lambda: print(self.ui.horizontalSlider.value()))
-
-        for i in range(len(wifi_points)):
-            self.ui.wifi_list = {}
-            key = 'list_wifi_frame' + str(i)
-            self.ui.wifi_list[key] = QFrame()
-            self.ui.wifi_list[key].setObjectName(key)
-            self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-            self.ui.wifi_list[key].setMinimumSize(QSize(167800, 40))
-            self.ui.frame_width = self.ui.wifi_list[key].width()
-            self.ui.frame_height = self.ui.wifi_list[key].height()
-
-            btnKey = 'list_wifi_pushButton' + str(i)
-            self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
-            self.ui.wifi_list[btnKey].setObjectName(btnKey)
-            self.ui.wifi_list[btnKey].setMinimumSize(self.ui.frame_width, 30)
-            self.ui.wifi_list[btnKey].setStyleSheet('text-align: left')
-
-            wifi = str(wifi_points[i]["name"]) + '\n' + str(wifi_points[i]["MAC"])
-
-            wifi_info = {'name': wifi_points[i]['name'],
-                         'MAC': wifi_points[i]['MAC'],
-                         'channel': wifi_points[i]['channel'],
-                         'power': wifi_points[i]['power'],
-                         'privacy': wifi_points[i]['privacy']
-                         }
-
-            self.ui.wifi_list[btnKey].setText(wifi)
-            self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
-            self.ui.vbox.addWidget(self.ui.wifi_list[key])
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -306,18 +255,40 @@ class MainWindow(QMainWindow):
             effect.setColor(QColor(0, 0, 0, 255))
             getattr(self.ui, x).setGraphicsEffect(effect)
 
-        self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.tools))
-        self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
-        self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
+        self.ui.scrollArea = QScrollArea(self.ui.list_wifi_frame_19)
+        self.ui.scrollArea.setObjectName(u"scrollArea")
+        self.ui.scrollArea.setMaximumSize(QSize(126700123, 500))
 
-        self.create_list_wifi()
+        self.ui.checker = True
+
+        self.ui.scrollArea.setWidgetResizable(True)
+        self.ui.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.ui.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.ui.scrollAreaWidgetContents = QWidget()
+        self.ui.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.ui.vbox = QVBoxLayout()
+
+        self.ui.scrollAreaWidgetContents.setLayout(self.ui.vbox)
+        self.ui.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 12345, 500))
+        self.ui.scrollArea.setWidget(self.ui.scrollAreaWidgetContents)
+        self.ui.gridLayout_7.addWidget(self.ui.scrollArea)
+
+
+        self.customazingListWifi(wifi_points)
+        self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
+        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
+        self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.tools))
+        self.ui.pushButton_5.clicked.connect(partial(self.filterListWifi, "1"))
+        self.ui.pushButton_6.clicked.connect(partial(self.filterListWifi, "8"))
+        self.ui.pushButton_7.clicked.connect(partial(self.filterListWifi, "all"))
+
+        self.create_list_wifi(wifi_points)
         self.create_nested_donuts()
         self.create_wifi_page()
         self.topology()
         self.tools()
 
-        self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
-        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
 
     def restore_or_maximize_window(self):
         if self.isMaximized():
@@ -346,6 +317,70 @@ class MainWindow(QMainWindow):
 
     def mousePressEvent(self, event):
         self.clickPosition = event.globalPos()
+
+    def filterListWifi(self, channels):
+        read_wifipoints()
+        filteredWFPoints = []
+        if channels == "all":
+            filteredWFPoints = wifi_points
+        else:
+            for i in range(len(wifi_points)):
+                if wifi_points[i]['channel'] in channels:
+                    filteredWFPoints.append(wifi_points[i])
+                else:
+                    pass
+        self.delCustomListWifi()
+        self.customazingListWifi(filteredWFPoints)
+
+    def customazingListWifi(self, wifiPoints):
+        global btnKey
+        global index
+        index = -1
+        self.ui.wifi_list = {}
+        for i in range(len(wifiPoints)):
+            print("in for")
+            key = 'list_wifi_frame' + str(i)
+
+            self.ui.wifi_list[key] = QFrame()
+            self.ui.wifi_list[key].setObjectName(key)
+            self.ui.wifi_list[key].setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            self.ui.wifi_list[key].setMinimumSize(QSize(167800, 40))
+            self.ui.frame_width = self.ui.wifi_list[key].width()
+            self.ui.frame_height = self.ui.wifi_list[key].height()
+
+            btnKey = 'list_wifi_pushButton' + str(i)
+            index = i
+            self.ui.wifi_list[btnKey] = QPushButton(self.ui.wifi_list[key])
+            self.ui.wifi_list[btnKey].setObjectName(btnKey)
+            self.ui.wifi_list[btnKey].setMinimumSize(self.ui.frame_width, 30)
+            self.ui.wifi_list[btnKey].setStyleSheet('text-align: left')
+
+            wifi = str(wifiPoints[i]["name"]) + '\n' + str(wifiPoints[i]["MAC"])
+
+            wifi_info = {'name': wifiPoints[i]['name'],
+                         'MAC': wifiPoints[i]['MAC'],
+                         'channel': wifiPoints[i]['channel'],
+                         'power': wifiPoints[i]['power'],
+                         'privacy': wifiPoints[i]['privacy']
+                         }
+
+            self.ui.wifi_list[btnKey].setText(wifi)
+            self.ui.wifi_list[btnKey].clicked.connect(partial(link_buttons, self.ui, wifi_info))
+            self.ui.vbox.addWidget(self.ui.wifi_list[key])
+        global btnKeyIndex
+        btnKeyIndex = index + 1
+        self.create_list_wifi(wifiPoints)
+
+    def loadFunc(self):
+        self.delCustomListWifi()
+        #self.customazingListWifi()
+
+    def delCustomListWifi(self):
+        for i in reversed(range(btnKeyIndex)):
+            delBut = "list_wifi_pushButton" + str(i)
+            delFr = "list_wifi_frame" + str(i)
+            self.ui.wifi_list[delBut].deleteLater()
+            self.ui.wifi_list[delFr].deleteLater()
 
     def create_nested_donuts(self):
         self.setMinimumSize(800, 600)
@@ -436,19 +471,18 @@ class MainWindow(QMainWindow):
 
         slc.setExploded(exploded)
 
-    def create_list_wifi(self):
-        global wifi_points
+    def create_list_wifi(self, wifiPoints):
         global optimum_length
         categories = []
         low = QtCharts.QBarSet("Power")
-        if len(wifi_points) > 10:
+        if len(wifiPoints) > 10:
             optimum_length = 10
         else:
-            optimum_length = len(wifi_points)
+            optimum_length = len(wifiPoints)
         for i in range(optimum_length):
-            pwr = wifi_points[i]["power"]
+            pwr = wifiPoints[i]["power"]
             low.append(pwr)
-            wifi_name_mac = f'{wifi_points[i]["name"]} / {wifi_points[i]["MAC"]}'
+            wifi_name_mac = f'{wifiPoints[i]["name"]} / {wifiPoints[i]["MAC"]}'
             categories.append(wifi_name_mac)
 
         series = QtCharts.QStackedBarSeries()
@@ -462,7 +496,7 @@ class MainWindow(QMainWindow):
         axisX.append(categories)
         chart.addAxis(axisX, Qt.AlignBottom)
         axisY = QtCharts.QValueAxis()
-        axisY.setRange(0, 5 + wifi_points[0]["power"])
+        axisY.setRange(0, 5 + wifiPoints[0]["power"])
         chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisX)
         series.attachAxis(axisY)
@@ -583,11 +617,6 @@ class MainWindow(QMainWindow):
         #self.load_text.setStyleSheet('font-size: 15px; background-color: blue')
         self.load_text.setText(QCoreApplication.translate("MainWindow", u"Load Info\nYou can skip it ", None))
         self.ui.gridLayout_6.addWidget(self.load_text, 0, 0, 9, 9)
-        #self.ui.load_btn = {}
-        #btnKey = 'load_pushButton'
-        #self.ui.load_btn[btnKey] = QPushButton()
-        #self.ui.load_btn[btnKey].setObjectName(btnKey)
-        #self.ui.load_btn[btnKey].setMinimumSize(self.ui.frame_width, 30)
         #self.ui.percentage_bar_chart_cont.addWidget(self.ui.load_btn[btnKey], 0, 0, 9, 9)
         #self.ui.tools_frame.setStyleSheet(u"background-color: transparent")
 
