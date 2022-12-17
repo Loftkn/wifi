@@ -13,11 +13,10 @@ from PySide2.QtCore import QPropertyAnimation, QSize, QTimer, Qt, Signal, QRect,
 import pyqtgraph as pg
 from random import randrange
 from functools import partial
-from random import randint
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
-from PyQt5.QtCore import pyqtSlot as pyqtSlot, pyqtProperty as pyqtProperty
+from PyQt5.QtCore import pyqtSlot as pyqtSlot, pyqtProperty as pyqtProperty, pyqtSignal, QThread
 from os import remove
 from ui_interface import Ui_MainWindow
 import threading
@@ -35,7 +34,7 @@ current_wifi = {}
 
 def read_wifipoints():
     global wifi_points
-    general_scan()
+    wifi_points = []  # temp
     with open('data-01.csv', 'r') as file:
         csv_reader = csv.reader(file)
         next(csv_reader)
@@ -78,16 +77,16 @@ def single_scan(mac, channel):
 
 
 def general_scan():
+    global general_proc
     clean()
-    proc = subprocess.Popen(['airodump-ng',
+    general_proc = subprocess.Popen(['airodump-ng',
                              '-w', 'data',
                              '--output-format', 'csv',
                              '--background', '1',
                              '-b', 'abg',
                              '-I', '1',
                              GENINTERFACE])
-    time.sleep(5)
-    proc.kill()
+    time.sleep(300)
 
 
 def clean():
@@ -120,7 +119,7 @@ def show_data():
 
 def show_data_clients():
     global clients
-    time.sleep(4)
+    # time.sleep(4)
     with open('single-01.csv', 'r') as file:
         clients = []
         reader = csv.reader(file)
@@ -289,17 +288,17 @@ class MainWindow(QMainWindow):
 
         self.customazingListWifi(wifi_points)
         self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
-        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.topology))
+        self.ui.pushButton_2.clicked.connect(lambda: self.create_topology())
         self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
-        self.ui.wifi_list[btnKey].clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.tools))
         self.ui.pushButton_5.clicked.connect(partial(self.filterListWifi, "1"))
         self.ui.pushButton_6.clicked.connect(partial(self.filterListWifi, "8"))
-        self.ui.pushButton_7.clicked.connect(partial(self.filterListWifi, "all"))
+        #self.ui.pushButton_7.clicked.connect(partial(self.filterListWifi, "all"))
+        self.ui.pushButton_7.clicked.connect(self.btnFunc)
+        self.ui.pushButton_4.clicked.connect(self.skipScan)
 
         self.create_list_wifi(wifi_points)
         self.create_nested_donuts()
         self.create_wifi_page()
-        self.topology()
         self.tools()
 
 
@@ -330,8 +329,8 @@ class MainWindow(QMainWindow):
 
     def create_topology(obj):
         obj.ui.topology.checker = False
-        thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
-        thr.start()
+        # thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
+        # thr.start()
         show_data_clients()
         obj.topology()
         obj.ui.stackedWidget.setCurrentWidget(obj.ui.topology)
@@ -339,10 +338,19 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, event):
         self.clickPosition = event.globalPos()
 
-    def filterListWifi(self, channels):
+    def skipScan(self):
+        global general_proc
+        self.thread.stop()
+        general_proc.kill()
         read_wifipoints()
+        self.loadFunc(wifi_points)
+        self.create_list_wifi(wifi_points)
+        self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi)
+
+    def filterListWifi(self, channels):
         filteredWFPoints = []
         if channels == "all":
+            read_wifipoints()
             filteredWFPoints = wifi_points
         else:
             for i in range(len(wifi_points)):
@@ -359,7 +367,6 @@ class MainWindow(QMainWindow):
         index = -1
         self.ui.wifi_list = {}
         for i in range(len(wifiPoints)):
-            print("in for")
             key = 'list_wifi_frame' + str(i)
 
             self.ui.wifi_list[key] = QFrame()
@@ -392,9 +399,9 @@ class MainWindow(QMainWindow):
         btnKeyIndex = index + 1
         self.create_list_wifi(wifiPoints)
 
-    def loadFunc(self):
+    def loadFunc(self, wifi_points):
         self.delCustomListWifi()
-        #self.customazingListWifi()
+        self.customazingListWifi(wifi_points)
 
     def delCustomListWifi(self):
         for i in reversed(range(btnKeyIndex)):
@@ -498,6 +505,8 @@ class MainWindow(QMainWindow):
         low = QtCharts.QBarSet("Power")
         if len(wifiPoints) > 10:
             optimum_length = 10
+        elif len(wifiPoints) == 0:
+            optimum_length = 0
         else:
             optimum_length = len(wifiPoints)
         for i in range(optimum_length):
@@ -517,7 +526,10 @@ class MainWindow(QMainWindow):
         axisX.append(categories)
         chart.addAxis(axisX, Qt.AlignBottom)
         axisY = QtCharts.QValueAxis()
-        axisY.setRange(0, 5 + wifiPoints[0]["power"])
+        if optimum_length == 0:
+            axisY.setRange(0, 0)
+        else:
+            axisY.setRange(0, 5 + wifiPoints[0]["power"])
         chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisX)
         series.attachAxis(axisY)
@@ -587,9 +599,6 @@ class MainWindow(QMainWindow):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
         wifi_point = current_wifi['name']
-        icons = {
-            wifi_point: "comp.png",
-        }
 
         G = nx.Graph()
         G.add_node(wifi_point)
@@ -597,10 +606,33 @@ class MainWindow(QMainWindow):
             G.add_node(clients[i][0])
             G.add_edge(wifi_point, clients[i][0])
 
+
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
 
+    def btnFunc(self):
+        thr = threading.Thread(target=general_scan)
+        thr.start()
+        self.tools()
+        self.ui.stackedWidget.setCurrentWidget(self.ui.tools)
+        self.thread = Threadd()
+        self.thread._signal.connect(self.signal_accept)
+        self.thread.start()
+        self.ui.pushButton_4.setEnabled(False)
+
+    def signal_accept(self, msg):
+        global general_proc
+        self.ui.progressBar.setValue(int(msg))
+        if self.ui.progressBar.value() == 20:
+             self.ui.pushButton_4.setEnabled(True)
+        elif self.ui.progressBar.value() == 99:
+            general_proc.kill()
+            self.thread.stop()
+            read_wifipoints()
+            self.loadFunc(wifi_points)
+            self.create_list_wifi(wifi_points)
+            self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi)
     def tools(self):
         self.load_text = QLabel()
         self.load_text.setObjectName(u"load_text")
@@ -688,18 +720,38 @@ class CompassWidget(QWidget):
 
     angle = pyqtProperty(float, angle, setAngle)
 
+class Threadd(QThread):
+    _signal = pyqtSignal(int)
+    def __init__(self):
+        super(Threadd, self).__init__()
+        self.running = True
+        self.count = 0
+
+#    def __del__(self):
+#        self.wait()
+
+    def run(self):
+        while self.running and self.count < 100:
+            time.sleep(3)
+            self.count += 1
+            self._signal.emit(self.count)
+
+    def stop(self):
+        self.running = False
 
 wifi_points = []
 single_proc = None
+general_proc = None
 current_wifi = None
 optimum_length = None
 is_scanning = None
 clients = None
-SINGLEINTERFACE = 'wlan0mon'
+skipped = False
+SINGLEINTERFACE = 'wlp0s20f3mon'
 GENINTERFACE = 'wlp0s20f3mon'
 
 if __name__ == "__main__":
-    read_wifipoints()
+    #read_wifipoints()
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

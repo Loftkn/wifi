@@ -291,7 +291,6 @@ class Ui_MainWindow(object):
 
         self.progressBar = QProgressBar(self.tools_frame)
         self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setValue(100)
 
         self.percentage_bar_chart_cont.addWidget(self.progressBar, 1, 0, 1, 1)
 
@@ -517,6 +516,6 @@ class Ui_MainWindow(object):
         self.pushButton_4.setText("Skip")
         self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"2.4ГГц", None))
         self.pushButton_6.setText(QCoreApplication.translate("MainWindow", u"5.0ГГц", None))
-        self.pushButton_7.setText(QCoreApplication.translate("MainWindow", u"Все", None))
+        self.pushButton_7.setText(QCoreApplication.translate("MainWindow", u"Scan", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Topology", None))
     # retranslateUi
