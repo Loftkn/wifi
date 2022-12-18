@@ -21,6 +21,9 @@ from os import remove
 from ui_interface import Ui_MainWindow
 import threading
 import subprocess
+import math
+import haversine as hs
+from haversine import Unit
 
 shadow_elements = {
     "left_menu_frame",
@@ -567,11 +570,11 @@ class MainWindow(QMainWindow):
         self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
 
         self.compass = CompassWidget()
-        spinBox = QSpinBox()
-        spinBox.setRange(0, 359)
-        spinBox.valueChanged.connect(self.compass.setAngle)
+        #spinBox = QSpinBox()
+        #spinBox.setRange(0, 359)
+        #spinBox.valueChanged.connect(self.compass.setAngle)
         self.ui.gridLayout_3.addWidget(self.compass)
-        self.ui.gridLayout_3.addWidget(spinBox)
+        #self.ui.gridLayout_3.addWidget(spinBox)
 
     def update_plot_data(self):
         powerlvl = show_data()
@@ -595,6 +598,13 @@ class MainWindow(QMainWindow):
 
         self.data_line.setData(self.x, self.y)  # Update the data.
 
+    def compDegree(self, loc1, loc2):
+        self.calculate_initial_compass_bearing(loc1, loc2)
+        #self.compass = CompassWidget()
+        #spinBox = QSpinBox()
+        #spinBox.setRange(0, 359)
+        #spinBox.valueChanged.connect(self.compass.setAngle)
+
     def topology(self):
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
@@ -610,6 +620,25 @@ class MainWindow(QMainWindow):
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
+
+    def calculate_initial_compass_bearing(pointA, pointB):
+        lat1 = math.radians(pointA[0])
+        lat2 = math.radians(pointB[0])
+
+        diffLong = math.radians(pointB[1] - pointA[1])
+
+        x = math.sin(diffLong) * math.cos(lat2)
+        y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
+                                               * math.cos(lat2) * math.cos(diffLong))
+
+        initial_bearing = math.atan2(x, y)
+
+        initial_bearing = math.degrees(initial_bearing)
+        compass_bearing = (initial_bearing + 360) % 360
+
+        dist = hs.haversine(loc1, loc2, unit=Unit.METERS)
+
+        return compass_bearing, dist
 
     def btnFunc(self):
         thr = threading.Thread(target=general_scan)
