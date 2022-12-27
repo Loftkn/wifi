@@ -69,6 +69,7 @@ def single_scan(mac, channel):
     clean()
     single_proc = subprocess.Popen(['airodump-ng',
                                     '-w', 'single',
+                                    '--gpsd',
                                     '--output-format', 'csv',
                                     '--background', '1',
                                     '-I', '1',
@@ -91,6 +92,29 @@ def general_scan():
                              GENINTERFACE])
     time.sleep(300)
 
+def show_kismet():
+    with open('single-01.kismet.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        next(reader)
+        for wifi in reader:
+            kismet = {'name': wifi[2],
+                      'MAC': wifi[3],
+                      'channel': wifi[5],
+                      'GPSMinLat': wifi[24],
+                      'GPSMinLon': wifi[25],
+                      'GPSMinAlt': wifi[26],
+                      'GPSMinSpd': wifi[27],
+                      'GPSMaxLat': wifi[28],
+                      'GPSMaxLon': wifi[29],
+                      'GPSMaxAlt': wifi[30],
+                      'GPSMaxSpd': wifi[31],
+                      'GPSBestLat': wifi[32],
+                      'GPSBestLon': wifi[33],
+                      'GPSBestAlt': wifi[34]
+                      }
+    self.compass = CompassWidget()
+    position = self.compDegree([kismet[8],kismet[9]], [38.89, -77.032])
+    self.compass.setAngle(position[0])
 
 def clean():
     try:
@@ -99,6 +123,14 @@ def clean():
         pass
     try:
         remove('single-01.csv')
+    except FileNotFoundError:
+        pass
+    try:
+        remove('single-01.kismet.csv')
+    except FileNotFoundError:
+        pass
+    try:
+        remove('single-01.gps')
     except FileNotFoundError:
         pass
 
@@ -184,6 +216,7 @@ def toogle_button(obj):
         is_scanning = True
         thr = threading.Thread(target=single_scan, args=(current_wifi['MAC'], current_wifi['channel']))
         thr.start()
+        show_kismet()
     else:
         obj.timer = None
         obj.ui.pushButton.setText("Start")
@@ -251,6 +284,7 @@ class MainWindow(QMainWindow):
         self.ui.close_window_button.clicked.connect(lambda: close_app(self))
         self.ui.restore_window_button.clicked.connect(lambda: self.restore_or_maximize_window())
         self.ui.open_close_side_bar_btn.clicked.connect(lambda: self.slideLeftMenu())
+        
 
         def moveWindow(e):
             if not self.isMaximized():
@@ -290,12 +324,12 @@ class MainWindow(QMainWindow):
 
 
         self.customazingListWifi(wifi_points)
+        self.ui.nested_donut_btn.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.nested_donuts))
         self.ui.pushButton.clicked.connect(lambda: toogle_button(self))
         self.ui.pushButton_2.clicked.connect(lambda: self.create_topology())
         self.ui.list_wifi_btn.clicked.connect(lambda: list_wifi_btn_clicked(self))
-        self.ui.pushButton_5.clicked.connect(partial(self.filterListWifi, "1"))
-        self.ui.pushButton_6.clicked.connect(partial(self.filterListWifi, "8"))
-        #self.ui.pushButton_7.clicked.connect(partial(self.filterListWifi, "all"))
+        self.ui.pushButton_5.clicked.connect(partial(self.filterListWifi, [str(i) for i in range(1, 15)]))
+        self.ui.pushButton_6.clicked.connect(partial(self.filterListWifi, [str(i) for i in range(36, 166)]))
         self.ui.pushButton_7.clicked.connect(self.btnFunc)
         self.ui.pushButton_4.clicked.connect(self.skipScan)
 
@@ -348,6 +382,7 @@ class MainWindow(QMainWindow):
         read_wifipoints()
         self.loadFunc(wifi_points)
         self.create_list_wifi(wifi_points)
+        self.create_nested_donuts()
         self.ui.stackedWidget.setCurrentWidget(self.ui.list_wifi)
 
     def filterListWifi(self, channels):
@@ -359,8 +394,6 @@ class MainWindow(QMainWindow):
             for i in range(len(wifi_points)):
                 if wifi_points[i]['channel'] in channels:
                     filteredWFPoints.append(wifi_points[i])
-                else:
-                    pass
         self.delCustomListWifi()
         self.customazingListWifi(filteredWFPoints)
 
@@ -420,7 +453,7 @@ class MainWindow(QMainWindow):
         self.chart_view.setRenderHint(QPainter.Antialiasing)
         self.chart = self.chart_view.chart()
         self.chart.legend().setVisible(False)
-        self.chart.setTitle("Nested donuts demo")
+        self.chart.setTitle("Nested donuts")
         self.chart.setAnimationOptions(QtCharts.QChart.AllAnimations)
 
         self.chart_view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
@@ -448,28 +481,34 @@ class MainWindow(QMainWindow):
         self.update_timer.start(5000)
 
     def setup_donuts(self):
+        counter = 0
         for i in range(self.donut_count):
             donut = QtCharts.QPieSeries()
+            slccount = 1
             if self.donut_count >= 5:
-                if len(wifi_points) / 5 >= 5:
-                    slccount = 5
-                else:
-                    slccount = 2
-            else:
-                slccount = 1
+                if len(wifi_points) / 5 >= 1:
+                    slccount = int(len(wifi_points) / 5)
             for j in range(slccount):
-                value = randrange(100, 200)
+                value = wifi_points[counter]['name'][:3] + '...'
 
-                slc = QtCharts.QPieSlice(str(value), value)
+                slc = QtCharts.QPieSlice(str(value), counter)
                 slc.setLabelVisible(True)
                 slc.setLabelColor(Qt.white)
                 slc.setLabelPosition(QtCharts.QPieSlice.LabelInsideTangential)
 
-                slc.hovered[bool].connect(partial(self.explode_slice, slc=slc))
+                if slc.hovered[bool] is False:
+                    newslc = QtCharts.QPieSlice(str(wifi_points[counter]['name']), counter)
+                    newslc.setLabelVisible(True)
+                    newslc.setLabelColor(Qt.white)
+                    newslc.setLabelPosition(QtCharts.QPieSlice.LabelInsideTangential)
+                    slc.hovered[bool].connect(partial(self.explode_slice, slc=newslc))
+                else:
+                    slc.hovered[bool].connect(partial(self.explode_slice, slc=slc))
                 donut.append(slc)
                 size = (self.max_size - self.min_size) / self.donut_count
                 donut.setHoleSize(self.min_size + i * size)
                 donut.setPieSize(self.min_size + (i + 1) * size)
+                counter += 1
 
             self.donuts.append(donut)
             self.chart_view.chart().addSeries(donut)
@@ -491,7 +530,14 @@ class MainWindow(QMainWindow):
                 self.donuts[i].setPieStartAngle(slice_endangle)
                 self.donuts[i].setPieEndAngle(360 + slice_startangle)
             print(slc.label(), slc.value())
-        #            slc.doubleClicked.connect(partial(link_buttons, self.ui, wifi_info))
+            valInt = int(slc.value())
+            wifi_info = {'name': wifi_points[valInt]['name'],
+                         'MAC': wifi_points[valInt]['MAC'],
+                         'channel': wifi_points[valInt]['channel'],
+                         'power': wifi_points[valInt]['power'],
+                         'privacy': wifi_points[valInt]['privacy']
+                         }
+            slc.doubleClicked.connect(partial(link_buttons, self.ui, wifi_info))
 
         else:
             for donut in self.donuts:
@@ -570,6 +616,8 @@ class MainWindow(QMainWindow):
         self.ui.wifi_page_graph_cont.addWidget(self.chart_view, 0, 0, 9, 9)
 
         self.compass = CompassWidget()
+        #position = self.compDegree([40.76, -73.984], [38.89, -77.032])
+        #self.compass.setAngle(position[0])
         #spinBox = QSpinBox()
         #spinBox.setRange(0, 359)
         #spinBox.valueChanged.connect(self.compass.setAngle)
@@ -599,11 +647,24 @@ class MainWindow(QMainWindow):
         self.data_line.setData(self.x, self.y)  # Update the data.
 
     def compDegree(self, loc1, loc2):
-        self.calculate_initial_compass_bearing(loc1, loc2)
-        #self.compass = CompassWidget()
-        #spinBox = QSpinBox()
-        #spinBox.setRange(0, 359)
-        #spinBox.valueChanged.connect(self.compass.setAngle)
+        #parsing
+        lat1 = math.radians(loc1[0])
+        lat2 = math.radians(loc2[0])
+
+        diffLong = math.radians(loc2[1] - loc1[1])
+
+        x = math.sin(diffLong) * math.cos(lat2)
+        y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
+                                               * math.cos(lat2) * math.cos(diffLong))
+
+        initial_bearing = math.atan2(x, y)
+
+        initial_bearing = math.degrees(initial_bearing)
+        compass_bearing = (initial_bearing + 360) % 360
+
+        dist = hs.haversine(loc1, loc2, unit=Unit.METERS)
+
+        return compass_bearing, dist
 
     def topology(self):
         self.figure = plt.figure()
@@ -620,25 +681,6 @@ class MainWindow(QMainWindow):
         nx.draw(G, with_labels=True)
         self.canvas.draw_idle()
         self.ui.temperature_bar_chart_cont.addWidget(self.canvas, 0, 0, 9, 9)
-
-    def calculate_initial_compass_bearing(pointA, pointB):
-        lat1 = math.radians(pointA[0])
-        lat2 = math.radians(pointB[0])
-
-        diffLong = math.radians(pointB[1] - pointA[1])
-
-        x = math.sin(diffLong) * math.cos(lat2)
-        y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
-                                               * math.cos(lat2) * math.cos(diffLong))
-
-        initial_bearing = math.atan2(x, y)
-
-        initial_bearing = math.degrees(initial_bearing)
-        compass_bearing = (initial_bearing + 360) % 360
-
-        dist = hs.haversine(loc1, loc2, unit=Unit.METERS)
-
-        return compass_bearing, dist
 
     def btnFunc(self):
         thr = threading.Thread(target=general_scan)
@@ -666,7 +708,7 @@ class MainWindow(QMainWindow):
         self.load_text = QLabel()
         self.load_text.setObjectName(u"load_text")
         self.load_text.setAlignment(Qt.AlignCenter)
-        #self.load_text.setStyleSheet('font-size: 15px; background-color: blue')
+        self.load_text.setStyleSheet('font-size: 15px')
         self.load_text.setText(QCoreApplication.translate("MainWindow", u"Load Info\nYou can skip it ", None))
         self.ui.gridLayout_6.addWidget(self.load_text, 0, 0, 9, 9)
         #self.ui.percentage_bar_chart_cont.addWidget(self.ui.load_btn[btnKey], 0, 0, 9, 9)
@@ -777,7 +819,8 @@ is_scanning = None
 clients = None
 skipped = False
 SINGLEINTERFACE = 'wlan0mon'
-GENINTERFACE = 'wlp0s20f3mon'
+GENINTERFACE = 'wlan0mon'
+#GENINTERFACE = 'wlp0s20f3mon'
 
 if __name__ == "__main__":
     #read_wifipoints()

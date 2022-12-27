@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.tools_frame.sizePolicy().hasHeightForWidth())
         self.tools_frame.setSizePolicy(sizePolicy)
         #self.tools_frame.setMinimumSize(QSize(0, 300))
-        self.tools_frame.setMaximumSize(QSize(126700, 1000))
+        self.tools_frame.setMaximumSize(QSize(16777215, 16777215))
         self.tools_frame.setStyleSheet(u"QFrame{background-color: none;}")
         self.tools_frame.setFrameShape(QFrame.StyledPanel)
         self.tools_frame.setFrameShadow(QFrame.Raised)
@@ -281,7 +281,7 @@ class Ui_MainWindow(object):
 
         self.widget = QWidget(self.tools_frame)
         self.widget.setObjectName(u"widget")
-        self.widget.setMaximumSize(QSize(123450, 500))
+        self.widget.setMaximumSize(QSize(16777215, 16777215))
         #self.widget.setAlignment(Qt.AlignTop)
         self.gridLayout_6 = QGridLayout(self.widget)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
